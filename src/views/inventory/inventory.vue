@@ -222,12 +222,17 @@
   >
     <template #operation="{ record }">
       <span class="table-operation">
-        <UpCircleTwoTone />
+        <a-tooltip title="查看" :color="'blue'">
+          <UpCircleTwoTone />
+        </a-tooltip>
         <a-divider
           type="vertical"
           style="height: 10px; background-color: #7cb305"
         />
-        <a><EditTwoTone /></a>
+
+        <a>
+          <a-tooltip title="编辑" :color="'blue'"><EditTwoTone /></a-tooltip
+        ></a>
         <a-divider
           type="vertical"
           style="height: 10px; background-color: #7cb305"
@@ -239,7 +244,10 @@
           cancel-text="否"
           @confirm="handelDel(record.id)"
         >
-          <a><DeleteTwoTone /></a>
+          <a
+            ><a-tooltip title="删除" :color="'blue'"
+              ><DeleteTwoTone /></a-tooltip
+          ></a>
         </a-popconfirm>
       </span>
     </template>

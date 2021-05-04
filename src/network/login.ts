@@ -1,8 +1,9 @@
-import { request } from './request';
+import { request } from "./request";
 
-export function login() {
+export function login(data) {
   return request({
-    url: '/',
-    method: 'get',
+    url: "/login",
+    method: "post",
+    data,
   });
 }

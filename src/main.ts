@@ -1,6 +1,7 @@
 import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router";
+import store from "./store";
 // 引入particles，登录页粒子背景
 import Particles from "particles.vue3";
 
@@ -9,4 +10,4 @@ import "ant-design-vue/dist/antd.css";
 // // 引入Antd配置文件
 import Antd from "./plugins/Ant";
 
-createApp(App).use(router).use(Antd).use(Particles).mount("#app");
+createApp(App).use(router).use(store).use(Antd).use(Particles).mount("#app");

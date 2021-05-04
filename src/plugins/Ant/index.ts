@@ -21,6 +21,8 @@ import {
   Table,
   Drawer,
   Popconfirm,
+  Tooltip,
+  Space,
 } from "ant-design-vue";
 // import { Divider } from 'ant-design-vue/lib/vc-menu'
 
@@ -47,6 +49,7 @@ const ant = {
     Vue.component(Badge.name, Badge);
     Vue.component(Dropdown.name, Dropdown);
     Vue.component(Steps.name, Steps);
+    Vue.component(Space.name, Space);
     Vue.component(Form.name, Form);
     Vue.component(Form.Item.name, Form.Item);
     Vue.component(Select.name, Select);
@@ -61,7 +64,7 @@ const ant = {
     Vue.component(Switch.name, Switch);
     Vue.component(Drawer.name, Drawer);
     Vue.component(Popconfirm.name, Popconfirm);
-
+    Vue.component(Tooltip.name, Tooltip);
     // 以后想引入什么就引入什么
   },
 };

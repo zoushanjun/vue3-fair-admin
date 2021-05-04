@@ -88,7 +88,12 @@
   >
     <template #operation="{ record }">
       <span class="table-operation">
-        <a href="#" @click.prevent="handleEdit(record)"><EditTwoTone /></a>
+        <a href="#" @click.prevent="handleEdit(record)">
+          <a-tooltip title="编辑" :color="'blue'">
+            <EditTwoTone />
+          </a-tooltip>
+        </a>
+
         <a-drawer
           v-model:visible="editDrawerVisible"
           title="修改服务"
@@ -149,7 +154,9 @@
           cancel-text="否"
           @confirm="handelDel(record.id)"
         >
-          <a><DeleteTwoTone /></a>
+          <a>
+            <a-tooltip title="删除" :color="'blue'"><DeleteTwoTone /></a-tooltip
+          ></a>
         </a-popconfirm>
       </span>
     </template>

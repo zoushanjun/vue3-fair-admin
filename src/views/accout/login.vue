@@ -119,10 +119,14 @@
             </a-input>
           </a-form-item>
           <a-form-item>
+            <VerifySlider @sliderSucess="subSliderPass"></VerifySlider>
+          </a-form-item>
+          <a-form-item>
             <a-button
               type="primary"
               html-type="submit"
               :disabled="formState.user === '' || formState.password === ''"
+              @click="submitForm(formState)"
             >
               登录
             </a-button>
@@ -140,8 +144,13 @@
 
 <script lang="ts">
 import { UserOutlined, LockOutlined } from "@ant-design/icons-vue";
+import router from "../../router/index";
 import { ValidateErrorEntity } from "ant-design-vue/es/form/interface";
-import { defineComponent, ref, reactive, UnwrapRef } from "vue";
+import { defineComponent, ref, reactive, UnwrapRef, onMounted } from "vue";
+import { message } from "ant-design-vue";
+
+import VerifySlider from "./VerifySlider.vue";
+import { login } from "../../network/login";
 interface FormState {
   user: string;
   password: string;
@@ -158,16 +167,94 @@ export default defineComponent({
     const handleFinishFailed = (errors: ValidateErrorEntity<FormState>) => {
       console.log(errors);
     };
+
+    const checked = ref<boolean>(true);
+    const sliderPassStas = ref<boolean>(false);
+    //通过VerifySlider.vue子组件传递的值判断滑动认证是否通过
+    const subSliderPass = (stas: String) => {
+      if (stas == "sliderPass") {
+        sliderPassStas.value = true;
+        // console.log(sliderPassStas.value);
+      } else sliderPassStas.value = false;
+    };
+
+    //设置cookie
+    const setCookie = (c_name, c_pwd, exdays) => {
+      var exdate = new Date(); //获取时间
+      exdate.setTime(exdate.getTime() + 24 * 60 * 60 * 1000 * exdays); //保存的天数
+      //字符串拼接cookie
+      window.document.cookie =
+        "user" + "=" + c_name + ";path=/;expires=" + exdate.toUTCString();
+      window.document.cookie =
+        "password" + "=" + c_pwd + ";path=/;expires=" + exdate.toUTCString();
+    };
+
+    //读取cookie
+    const getCookie = () => {
+      if (document.cookie.length > 0) {
+        var arr = document.cookie.split("; "); //这里显示的格式需要切割一下自己可输出看下
+        for (var i = 0; i < arr.length; i++) {
+          var arr2 = arr[i].split("="); //再次切割
+          //判断查找相对应的值
+          if (arr2[0] == "user") {
+            formState.user = arr2[1]; //保存到保存数据的地方
+          } else if (arr2[0] == "password") {
+            formState.password = arr2[1];
+          }
+        }
+      }
+    };
+
+    //清除cookie
+    const clearCookie = () => {
+      setCookie("", "", -1); //修改2值都为空，天数为负1天就好了
+    };
+
+    onMounted(() => {
+      getCookie();
+    });
+
+    const submitForm = (userInfo) => {
+      console.log(sliderPassStas.value);
+      if (checked) {
+        // console.log("checked == true" + userInfo);
+        //传入账号名，密码，和保存天数3个参数
+        setCookie(userInfo.user, userInfo.password, 7);
+        if (sliderPassStas.value == true) {
+          // 提交后台验证账号密码
+          login(userInfo).then((res) => {
+            if (res.status == 200) {
+              message.success("登录成功！");
+              sessionStorage.setItem("Login-user", userInfo.user);
+              router.push("/");
+            } else {
+              message.warning("账号密码错误");
+            }
+          });
+        } else {
+          message.warning("请进行滑块验证");
+        }
+      } else {
+        // console.log("清空Cookie");
+        //清空Cookie
+        clearCookie();
+      }
+    };
+
     return {
       formState,
       handleFinish,
       handleFinishFailed,
-      checked: ref(true),
+      checked,
+      subSliderPass,
+      sliderPassStas,
+      submitForm,
     };
   },
   components: {
     UserOutlined,
     LockOutlined,
+    VerifySlider,
   },
 });
 </script>
@@ -235,5 +322,20 @@ export default defineComponent({
 
 .login-form .a-form-item {
   margin-bottom: 12px;
+}
+
+.code {
+  background-image: url(111.jpg);
+  font-family: Arial, 宋体;
+  font-style: italic;
+  color: green;
+  border: 0;
+  padding: 2px 3px;
+  letter-spacing: 3px;
+  font-weight: bolder;
+}
+
+.unchanged {
+  border: 0;
 }
 </style>

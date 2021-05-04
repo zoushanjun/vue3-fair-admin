@@ -27,8 +27,8 @@
         <a-menu-item key="4">
           <router-link to="/workorder">
             <CustomerServiceOutlined />
+            <span>工单</span>
           </router-link>
-          <span>工单</span>
         </a-menu-item>
         <a-menu-item key="5">
           <router-link to="/job">
@@ -76,28 +76,29 @@
           </a-breadcrumb>
         </span>
         <span style="float: right; width: 100px; margin-right: 0">
-          <a-dropdown>
-            <a class="ant-dropdown-link" @click.prevent>
-              admin
-              <DownOutlined />
-            </a>
-            <template #overlay>
-              <a-menu>
-                <a-menu-item key="0">
+          <a-space>
+            <UserOutlined style="margin-rigt: 5px" />
+            <a-dropdown>
+              <a class="ant-dropdown-link" @click.prevent>
+                {{ currentUser }}
+                <DownOutlined />
+              </a>
+              <template #overlay>
+                <a-menu>
+                  <!-- <a-menu-item key="0">
                   <a href="javascript:;"
                     ><EditOutlined style="margin-right: 5px" />改密</a
                   >
-                </a-menu-item>
-                <a-menu-item key="1">
-                  <router-link to="/login">
-                    <a href="javascript:;"
-                      ><LogoutOutlined style="margin-right: 5px" />登出</a
+                </a-menu-item> -->
+                  <a-menu-item key="1">
+                    <a @click="logout"
+                      ><PoweroffOutlined style="margin-right: 5px" />注销</a
                     >
-                  </router-link>
-                </a-menu-item>
-              </a-menu>
-            </template>
-          </a-dropdown>
+                  </a-menu-item>
+                </a-menu>
+              </template>
+            </a-dropdown>
+          </a-space>
         </span>
       </a-layout-header>
       <a-layout-content>
@@ -121,9 +122,11 @@ import {
   DownOutlined,
   EditOutlined,
   LogoutOutlined,
+  PoweroffOutlined,
+  UserOutlined,
 } from "@ant-design/icons-vue";
 import { defineComponent, ref, watch } from "vue";
-// import router from "../../router/index";
+import router from "../../router/index";
 export default defineComponent({
   // 监听路由配合实现面包屑功能
   watch: {
@@ -132,11 +135,18 @@ export default defineComponent({
   setup() {
     // let menuList = router.options.routes[0].children;
     // console.log(menuList);
+    const currentUser = sessionStorage.getItem("Login-user");
+    const logout = () => {
+      sessionStorage.removeItem("Login-user");
+      router.push("/login");
+    };
 
     return {
       // menuList,
       selectedKeys: ref<string[]>(["1"]),
       collapsed: ref<boolean>(true),
+      currentUser,
+      logout,
     };
   },
   components: {
@@ -153,6 +163,8 @@ export default defineComponent({
     DownOutlined,
     EditOutlined,
     LogoutOutlined,
+    PoweroffOutlined,
+    UserOutlined,
   },
 });
 </script>

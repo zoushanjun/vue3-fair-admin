@@ -25,7 +25,9 @@
       <!-- <a-button type="dashed" shape="circle">
               <template #icon><PlusOutlined /></template>
             </a-button> -->
-      <PlusOutlined />
+      <a-tooltip title="增加工单" :color="'blue'">
+        <PlusOutlined />
+      </a-tooltip>
 
       <a-divider
         type="vertical"
@@ -34,7 +36,9 @@
       <!-- <a-button type="dashed" shape="circle">
               <template #icon><FileExcelOutlined /></template>
             </a-button> -->
-      <FileExcelOutlined />
+      <a-tooltip title="导出Excel" :color="'blue'">
+        <FileExcelOutlined />
+      </a-tooltip>
     </template>
     -->
 

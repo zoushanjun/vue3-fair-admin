@@ -70,7 +70,10 @@
           @confirm="handelDel(record.id)"
           @cancel="cancelDelete"
         >
-          <a><DeleteTwoTone /></a>
+          <a
+            ><a-tooltip title="删除" :color="'blue'"
+              ><DeleteTwoTone /></a-tooltip
+          ></a>
         </a-popconfirm>
       </span>
     </template>

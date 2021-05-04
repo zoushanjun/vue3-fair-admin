@@ -124,8 +124,8 @@
         <span>
           <!-- fairlist表单中的编辑 -->
           <a href="#" @click.prevent="handleEditFair(record)"
-            ><EditTwoTone
-          /></a>
+            ><a-tooltip title="编辑" :color="'blue'"><EditTwoTone /></a-tooltip
+          ></a>
           <a-drawer
             v-model:visible="editDrawerVisible"
             title="修改展会"
@@ -206,7 +206,10 @@
             cancel-text="否"
             @confirm="handelDel(record.id)"
           >
-            <a><DeleteTwoTone /></a>
+            <a
+              ><a-tooltip title="删除" :color="'blue'"
+                ><DeleteTwoTone /></a-tooltip
+            ></a>
           </a-popconfirm>
         </span>
       </template>
