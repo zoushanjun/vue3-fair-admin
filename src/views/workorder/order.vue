@@ -492,10 +492,6 @@ export default defineComponent({
       console.log("or use this.value", value.value);
     };
 
-    const onSubmit = () => {
-      console.log("submit!", toRaw(formFair));
-    };
-
     // 展会复选框逻辑处理
     const rowSelection = {
       onChange: (
@@ -647,7 +643,7 @@ export default defineComponent({
         editableData[k] = record[k];
       }
       // console.log(fairCopiedName.value);
-      console.log(editableData);
+      // console.log(editableData);
     };
 
     const handleEditDrawerClose = () => {
@@ -765,7 +761,6 @@ export default defineComponent({
       value,
       onSearch,
 
-      onSubmit,
       value2,
 
       handleAdd,
