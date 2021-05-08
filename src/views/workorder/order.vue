@@ -12,42 +12,135 @@
     <a-button shape="round" style="margin-left: 10px"
       ><template #icon><ReloadOutlined /></template>重置</a-button
     >
+
+    <a-button shape="round" style="margin-left: 10px"
+      ><template #icon><FileExcelOutlined /></template>导出</a-button
+    >
   </div>
   <!-- 分割线 -->
   <a-divider />
-  <!-- 工单列表，嵌套表格 -->
+  <!-- 工单列表，嵌套父表格 -->
   <a-table
     :columns="columns"
-    :data-source="data"
+    :data-source="fairData"
+    :row-selection="rowSelection"
+    :rowKey="(record) => record.id"
+    :expandedRowKeys="expandedRowKeys"
+    @expand="onExpand"
+    size="small"
     class="components-table-demo-nested"
   >
-    <template #operation>
-      <!-- <a-button type="dashed" shape="circle">
-              <template #icon><PlusOutlined /></template>
-            </a-button> -->
-      <a-tooltip title="增加工单" :color="'blue'">
-        <PlusOutlined />
-      </a-tooltip>
+    <template #operation="{ record }">
+      <a @click="handleAdd(record)">
+        <a-tooltip title="增加工单" :color="'blue'">
+          <PlusOutlined />
+        </a-tooltip>
+      </a>
 
-      <a-divider
-        type="vertical"
-        style="height: 10px; background-color: #7cb305"
-      />
-      <!-- <a-button type="dashed" shape="circle">
-              <template #icon><FileExcelOutlined /></template>
-            </a-button> -->
-      <a-tooltip title="导出Excel" :color="'blue'">
-        <FileExcelOutlined />
-      </a-tooltip>
+      <!-- 点击新增按钮，弹出新增工单抽屉 -->
+
+      <a-drawer
+        v-model:visible="drawerVisible"
+        title="新增工单"
+        :width="600"
+        :body-style="{ paddingBottom: '80px' }"
+        :maskStyle="{
+          opacity: '0.1',
+          background: '#778899',
+          animation: 'none',
+        }"
+        @ok="drawerVisible = false"
+      >
+        <a-form
+          ref="formRef"
+          :model="form"
+          :label-col="labelCol"
+          :wrapper-col="wrapperCol"
+          :rules="rules"
+        >
+          <a-form-item label="展会名称："> {{ fairCopiedName }} </a-form-item>
+          <a-form-item v-if="false">
+            <a-input v-model:value="form.fairCopiedId" />
+          </a-form-item>
+
+          <a-form-item label="安装地点：" ref="orderLocation">
+            <a-input
+              v-model:value="form.orderLocation"
+              placeholder="安装地点"
+            />
+          </a-form-item>
+          <a-form-item label="服务项目：">
+            <a-input v-model:value="form.orderSvcItem" placeholder="服务项目" />
+          </a-form-item>
+          <a-form-item label="费用：">
+            <a-input
+              addon-before="￥"
+              v-model:value="form.orderCharge"
+              placeholder="费用"
+            />
+          </a-form-item>
+          <a-form-item label="客户名称：">
+            <a-input v-model:value="form.orderCustom" placeholder="客户名称" />
+          </a-form-item>
+          <a-form-item label="联系人：">
+            <a-input v-model:value="form.orderContacts" placeholder="联系人" />
+          </a-form-item>
+          <a-form-item label="联系电话：">
+            <a-input v-model:value="form.orderTel" placeholder="联系电话" />
+          </a-form-item>
+
+          <a-form-item label="工单状态：">
+            <!-- <a-input v-model:value="form.orderStaus" placeholder="工单状态" /> -->
+            <a-radio-group
+              name="radioGroup"
+              v-model:value="form.orderStaus"
+              size="small"
+            >
+              <a-radio value="未指派">未指派</a-radio>
+              <a-radio value="已指派">已指派</a-radio>
+              <a-radio value="已施工">已施工</a-radio>
+              <a-radio value="已回收">已回收</a-radio>
+            </a-radio-group>
+          </a-form-item>
+
+          <a-form-item label="工单来源：">
+            <a-input v-model:value="form.orderOrigin" defaultValue="展务通" />
+          </a-form-item>
+
+          <a-form-item label="备注：">
+            <a-input v-model:value="form.orderRemark" placeholder="备注" />
+          </a-form-item>
+        </a-form>
+        <div
+          :style="{
+            position: 'absolute',
+            right: 0,
+            bottom: 0,
+            width: '100%',
+            borderTop: '1px solid #e9e9e9',
+            padding: '10px 16px',
+            background: '#fff',
+            textAlign: 'right',
+            zIndex: 1,
+          }"
+        >
+          <a-button style="margin-right: 8px" @click="resetForm">重置</a-button>
+          <a-button style="margin-right: 8px" @click="handleDrawerClose"
+            >取消</a-button
+          >
+          <a-button type="primary" @click="handleAddSubmit(form)"
+            >提交</a-button
+          >
+        </div>
+      </a-drawer>
     </template>
-    -->
-
     <!-- 对嵌套子表格进行渲染-->
     <template #expandedRowRender>
       <a-table
         :columns="innerColumns"
-        :data-source="innerData"
+        :data-source="orderData"
         :pagination="false"
+        :rowKey="(record) => record.id"
         size="small"
       >
         <template #orderStaus>
@@ -56,19 +149,178 @@
             Finished
           </span>
         </template>
-        <template #operation>
+        <template #operation="{ record }">
           <span class="table-operation">
-            <a>修改</a>
+            <a href="#" @click.prevent="handleEdit(record)"
+              ><a-tooltip title="编辑" :color="'blue'"
+                ><EditTwoTone /></a-tooltip
+            ></a>
+            <a-drawer
+              v-model:visible="editDrawerVisible"
+              title="编辑工单"
+              :width="600"
+              :body-style="{ paddingBottom: '80px' }"
+              :maskStyle="{
+                opacity: '0.1',
+                background: '#778899',
+                animation: 'none',
+              }"
+              @ok="drawerVisible = false"
+            >
+              <a-form
+                ref="formRef"
+                :model="form"
+                :label-col="labelCol"
+                :wrapper-col="wrapperCol"
+                :rules="rules"
+              >
+                <a-form-item label="展会名称：">
+                  {{ fairCopiedName }}
+                </a-form-item>
+
+                <a-form-item label="安装地点：">
+                  <a-input v-model:value="editableData.orderLocation" />
+                </a-form-item>
+                <a-form-item label="服务项目：">
+                  <a-input v-model:value="editableData.orderSvcItem" />
+                </a-form-item>
+                <a-form-item label="费用：">
+                  <a-input
+                    addon-before="￥"
+                    v-model:value="editableData.orderCharge"
+                  />
+                </a-form-item>
+                <a-form-item label="客户名称：">
+                  <a-input v-model:value="editableData.orderCustom" />
+                </a-form-item>
+                <a-form-item label="联系人：">
+                  <a-input v-model:value="editableData.orderContacts" />
+                </a-form-item>
+                <a-form-item label="联系电话：">
+                  <a-input v-model:value="editableData.orderTel" />
+                </a-form-item>
+
+                <a-form-item label="工单状态：">
+                  <a-radio-group
+                    name="radioGroup"
+                    v-model:value="editableData.orderStaus"
+                    size="small"
+                  >
+                    <a-radio value="未指派">未指派</a-radio>
+                    <a-radio value="已指派">已指派</a-radio>
+                    <a-radio value="已施工">已施工</a-radio>
+                    <a-radio value="已回收">已回收</a-radio>
+                  </a-radio-group>
+                </a-form-item>
+
+                <a-form-item label="工单来源：">
+                  <a-input v-model:value="editableData.orderOrigin" />
+                </a-form-item>
+
+                <a-form-item label="备注：">
+                  <a-input v-model:value="editableData.orderRemark" />
+                </a-form-item>
+              </a-form>
+              <div
+                :style="{
+                  position: 'absolute',
+                  right: 0,
+                  bottom: 0,
+                  width: '100%',
+                  borderTop: '1px solid #e9e9e9',
+                  padding: '10px 16px',
+                  background: '#fff',
+                  textAlign: 'right',
+                  zIndex: 1,
+                }"
+              >
+                <a-button
+                  style="margin-right: 8px"
+                  @click="handleEditDrawerClose()"
+                  >取消</a-button
+                >
+                <a-button
+                  style="margin-right: 8px"
+                  @click="handlePutOrder(editableData)"
+                  >提交</a-button
+                >
+              </div>
+            </a-drawer>
+
             <a-divider
               type="vertical"
               style="height: 10px; background-color: #7cb305"
             />
-            <a>删除</a>
+            <a-popconfirm
+              title="确定要删除吗?"
+              ok-text="是"
+              cancel-text="否"
+              @confirm="handleDel(record.id)"
+            >
+              <a
+                ><a-tooltip title="删除" :color="'blue'"
+                  ><DeleteTwoTone /></a-tooltip
+              ></a>
+            </a-popconfirm>
             <a-divider
               type="vertical"
               style="height: 10px; background-color: #7cb305"
             />
-            <a>指派</a>
+            <a href="#" @click.prevent="handleAssign(record)"
+              ><a-tooltip title="指派" :color="'blue'"
+                ><RightSquareTwoTone /></a-tooltip
+            ></a>
+            <a-drawer
+              v-model:visible="assignDrawerVisible"
+              title="指派工单"
+              :width="600"
+              :body-style="{ paddingBottom: '80px' }"
+              :maskStyle="{
+                opacity: '0.1',
+                background: '#778899',
+                animation: 'none',
+              }"
+              @ok="drawerVisible = false"
+            >
+              <div :style="{ borderBottom: '1px solid #E9E9E9' }">
+                <a-checkbox
+                  v-model:checked="checkAll"
+                  :indeterminate="indeterminate"
+                  @change="onCheckAllChange"
+                >
+                  选中所有
+                </a-checkbox>
+              </div>
+              <br />
+              <a-checkbox-group
+                v-model:value="checkedList"
+                :options="plainOptions"
+              />
+              <div
+                :style="{
+                  position: 'absolute',
+                  right: 0,
+                  bottom: 0,
+                  width: '100%',
+                  borderTop: '1px solid #e9e9e9',
+                  padding: '10px 16px',
+                  background: '#fff',
+                  textAlign: 'right',
+                  zIndex: 1,
+                }"
+              >
+                <a-button
+                  style="margin-right: 8px"
+                  @click="handleAssignDrawerClose()"
+                  >取消</a-button
+                >
+                <a-button
+                  style="margin-right: 8px"
+                  @click="handlePutAssign(editableData)"
+                  >提交</a-button
+                >
+              </div>
+            </a-drawer>
           </span>
         </template>
       </a-table>
@@ -77,59 +329,94 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, toRaw } from "vue";
+import {
+  defineComponent,
+  ref,
+  UnwrapRef,
+  reactive,
+  toRaw,
+  toRefs,
+  watch,
+  onMounted,
+} from "vue";
+import moment, { Moment } from "moment";
+import { getFairList } from "../../network/fairApi";
+import {
+  getOrderList,
+  postOrder,
+  deleteOrder,
+  putOrder,
+} from "../../network/orderApi";
+import { message } from "ant-design-vue";
 import {
   PlusOutlined,
   FileExcelOutlined,
   ReloadOutlined,
+  EditTwoTone,
+  DeleteTwoTone,
+  RightSquareTwoTone,
 } from "@ant-design/icons-vue";
-import {
-  // 弹出对话框
-  Modal,
-  DatePicker,
-} from "ant-design-vue";
 
-import { Moment } from "moment";
-
-// import 'ant-design-vue/dist/antd.css';
-const { RangePicker } = DatePicker;
 const columns = [
-  { title: "展会名称", dataIndex: "fairName", key: "fairName" },
-  { title: "举办时间", dataIndex: "fariTime", key: "fariTime" },
-  { title: "举办地点", dataIndex: "fairLocation", key: "fairLocation" },
-  { title: "操作", key: "operation", slots: { customRender: "operation" } },
+  {
+    title: "展会名称",
+    dataIndex: "fairName",
+    key: "fairName",
+    width: 500,
+    ellipsis: true,
+  },
+  {
+    title: "筹展时间",
+    dataIndex: "prepareTime",
+    key: "prepareTime",
+    width: 100,
+    customRender: ({ text }) => moment(text).format("Y-M-D"),
+  },
+  {
+    title: "开展时间",
+    dataIndex: "startTime",
+    key: "startTime",
+    width: 100,
+    customRender: ({ text }) => moment(text).format("Y-M-D"),
+  },
+  {
+    title: "撤展时间",
+    dataIndex: "endTime",
+    key: "endTime",
+    width: 100,
+    customRender: ({ text }) => moment(text).format("Y-M-D"),
+  },
+  {
+    title: "地点",
+    dataIndex: "location",
+    key: "location",
+    ellipsis: true,
+  },
+
+  {
+    title: "操作",
+    key: "operation",
+    width: 100,
+    slots: { customRender: "operation" },
+  },
 ];
 
 interface DataItem {
-  key: number;
   fairName: string;
-  fariTime: string;
-  fairLocation: string;
-  // upgradeNum: number;
-  // creator: string;
-  // createdAt: string;
+  sponsorInfo: string;
+  prepareTime: Moment;
+  startTime: Moment;
+  endTime: Moment;
+  location: string;
 }
 
-const data: DataItem[] = [];
-for (let i = 0; i < 50; ++i) {
-  data.push({
-    key: i,
-    fairName:
-      "2021广州国际工业自动化技术及装备展览会及广州国际工业机器人展览会",
-    fariTime: "2021.2.28-2021.3.5",
-    fairLocation: "10.2-11.2、13.2",
-    // upgradeNum: 500,
-    // creator: 'Jack',
-    // createdAt: '2014-12-24 23:12:00',
-  });
-}
+// const data: DataItem[] = [];
 
 const innerColumns = [
   {
     title: "安装地点",
     dataIndex: "orderLocation",
     key: "orderLocation",
-    width: 200,
     ellipsis: true,
   },
   {
@@ -144,6 +431,7 @@ const innerColumns = [
     title: "客户名称",
     dataIndex: "orderCustom",
     key: "orderCustom",
+    width: 100,
     ellipsis: true,
   },
   {
@@ -171,13 +459,14 @@ const innerColumns = [
     title: "操作",
     dataIndex: "operation",
     key: "operation",
-    width: 150,
+    width: 120,
     slots: { customRender: "operation" },
   },
 ];
 
-interface innerDataItem {
-  key: number;
+// 新增展工单弹出框表单内容接口
+interface FormOrder {
+  fairId: number;
   orderLocation: string;
   orderSvcItem: string;
   orderCharge: string;
@@ -189,26 +478,10 @@ interface innerDataItem {
   orderRemark: string;
 }
 
-const innerData: innerDataItem[] = [];
-for (let i = 0; i < 50; ++i) {
-  innerData.push({
-    key: i,
-    orderLocation:
-      "一楼9号门门禁及服务点一楼9号门门禁及服务点一楼9号门门禁及服务点",
-    orderSvcItem: "15M宽带*1 15M宽带*1 15M宽带*1 15M宽带*1",
-    orderCharge: "2500",
-    orderCustom: "主场",
-    orderContacts: "雷晓震",
-    orderTel: "18516282045",
-    orderStaus: "未指派",
-    orderOrigin: "展务通",
-    orderRemark: "4月3日上午安装到位，提供HUB一个",
-  });
-}
-
 export default defineComponent({
   name: "order",
   setup() {
+    // const { Option } = Select;
     const value = ref<string>("");
 
     // 定义弹出框举办地点变量
@@ -223,36 +496,291 @@ export default defineComponent({
       console.log("submit!", toRaw(formFair));
     };
 
-    return {
-      //针对时间段选择器
-      value3: ref<Moment[]>([]),
+    // 展会复选框逻辑处理
+    const rowSelection = {
+      onChange: (
+        selectedRowKeys: (string | number)[],
+        selectedRows: DataItem[]
+      ) => {
+        console.log(
+          `selectedRowKeys: ${selectedRowKeys}`,
+          "selectedRows: ",
+          selectedRows
+        );
+      },
+      onSelect: (
+        record: DataItem,
+        selected: boolean,
+        selectedRows: DataItem[]
+      ) => {
+        console.log(record, selected, selectedRows);
+      },
+      onSelectAll: (
+        selected: boolean,
+        selectedRows: DataItem[],
+        changeRows: DataItem[]
+      ) => {
+        console.log(selected, selectedRows, changeRows);
+      },
+    };
 
-      //针对选项卡
-      activeKey: ref("1"),
+    //工单对应展会列表数据
+    // 页面挂载后读取展会列表
+    const fairData = ref([]);
+    onMounted(() => {
+      getFairList()
+        .then((res) => {
+          // console.log(res);
+          fairData.value = res.data;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    });
+
+    //点击展开“+”符号
+    const orderData = ref([]);
+    const expandedRowKeys = ref([Number]);
+    const onExpand = (expended: boolean, record) => {
+      if (expended) {
+        expandedRowKeys.value = []; //重置展开节点
+        orderData.value = []; //先清空数据，否则会先显示上一次的数据再刷新为本次的数据
+        fairCopiedName.value = record.fairName; //存储展会名称用于工单编辑
+        expandedRowKeys.value.push(record.id);
+        // console.log("展开ID列表" + expandedRowKeys.value);
+        const params = {
+          fairId: record.id,
+        };
+        getOrderList(params)
+          .then((res) => {
+            orderData.value = res.data;
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } else {
+        expandedRowKeys.value = []; //折叠当前行
+      }
+    };
+
+    // 增加工单
+    const drawerVisible = ref<boolean>(false);
+    const fairCopiedName = ref<string>("");
+    const fairCopiedId = ref<number>();
+    const handleAdd = (record: any) => {
+      drawerVisible.value = true;
+      //复制展会名称和ID
+      fairCopiedName.value = record.fairName;
+      fairCopiedId.value = record.id;
+      form.fairId = record.id;
+    };
+
+    //定义表单对象初始值
+    const form: UnwrapRef<FormOrder> = reactive({
+      fairId: 0,
+      orderLocation: "",
+      orderSvcItem: "",
+      orderCharge: "",
+      orderCustom: "",
+      orderContacts: "",
+      orderTel: "",
+      orderStaus: "未指派",
+      orderOrigin: "展务通",
+      orderRemark: "",
+    });
+
+    const handleAddSubmit = (form) => {
+      postOrder(form).then((res) => {
+        if (res.status == 200) {
+          message.success("新增工单成功！");
+          drawerVisible.value = false;
+          // 取出当前是哪一行展开
+          // console.log(expandedRowKeys.value[0]);
+          // 刷新展开行工单数据
+          const params = {
+            fairId: expandedRowKeys.value[0],
+          };
+          getOrderList(params)
+            .then((res) => {
+              orderData.value = res.data;
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }
+      });
+    };
+
+    // 新增/修改 - 表单验证规则;
+    const rules = {
+      orderLocation: [
+        { required: true, message: "请输入安装位置", trigger: "blur" },
+        { min: 3, max: 256, message: "长度在3和256之间", trigger: "blur" },
+      ],
+    };
+
+    const formRef = ref<any>(null);
+    const resetForm = () => {
+      // formRef.value.resetFields();
+      form.orderLocation = "";
+      form.orderSvcItem = "";
+      form.orderCharge = "";
+      form.orderCustom = "";
+      form.orderContacts = "";
+      form.orderTel = "";
+      form.orderStaus = "未指派";
+      form.orderOrigin = "展务通";
+      form.orderRemark = "";
+    };
+
+    const handleDrawerClose = () => {
+      drawerVisible.value = false;
+    };
+
+    // 修改工单
+    const editDrawerVisible = ref<boolean>(false);
+    const editableData: UnwrapRef<Record<string, FormOrder>> = reactive({});
+    const handleEdit = (record: any) => {
+      editDrawerVisible.value = true;
+      //复制数据用于编辑
+      for (const k in record) {
+        editableData[k] = record[k];
+      }
+      // console.log(fairCopiedName.value);
+      console.log(editableData);
+    };
+
+    const handleEditDrawerClose = () => {
+      editDrawerVisible.value = false;
+    };
+
+    const handlePutOrder = (Data: object) => {
+      // console.log(Data);
+      putOrder(Data).then((res) => {
+        if (res.status == 200) {
+          message.success("更新成功！");
+          editDrawerVisible.value = false;
+
+          // 刷新展开行工单数据
+          const params = {
+            fairId: expandedRowKeys.value[0],
+          };
+          getOrderList(params)
+            .then((res) => {
+              orderData.value = res.data;
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }
+      });
+    };
+
+    // 删除工单
+    const handleDel = (e: MouseEvent) => {
+      deleteOrder({ id: e }).then((res) => {
+        if (res.status == 200) {
+          message.success("删除成功！");
+          // 刷新展开行工单数据
+          const params = {
+            fairId: expandedRowKeys.value[0],
+          };
+          getOrderList(params)
+            .then((res) => {
+              orderData.value = res.data;
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }
+      });
+    };
+
+    //指派
+    const assignDrawerVisible = ref<boolean>(false);
+    const plainOptions = ["林细彬", "曾烈春", "王建业"];
+
+    const handleAssign = (e: MouseEvent) => {
+      assignDrawerVisible.value = true;
+    };
+
+    const state = reactive({
+      indeterminate: true,
+      checkAll: false,
+      checkedList: ["Apple", "Orange"],
+    });
+
+    const onCheckAllChange = (e: any) => {
+      Object.assign(state, {
+        checkedList: e.target.checked ? plainOptions : [],
+        indeterminate: false,
+      });
+    };
+    watch(
+      () => state.checkedList,
+      (val) => {
+        state.indeterminate = !!val.length && val.length < plainOptions.length;
+        state.checkAll = val.length === plainOptions.length;
+      }
+    );
+
+    const handleAssignDrawerClose = () => {
+      assignDrawerVisible.value = false;
+    };
+
+    return {
+      rowSelection,
+      fairData,
+      columns,
+      innerColumns,
+      orderData,
+      onExpand,
+      expandedRowKeys,
+
+      drawerVisible,
+      form,
+      formRef,
+      rules,
+      fairCopiedName,
+      resetForm,
+      handleAddSubmit,
+      handleDrawerClose,
+      //新增工单form样式
+      labelCol: { span: 4 },
+      wrapperCol: { span: 20 },
+      // Option,
+
+      editDrawerVisible,
+      editableData,
+      handleEditDrawerClose,
+      handlePutOrder,
+
+      handleAssign,
+      assignDrawerVisible,
+      handleAssignDrawerClose,
+      ...toRefs(state),
+      plainOptions,
+      onCheckAllChange,
+
       value,
       onSearch,
-
-      //返回新增展会表单内容
-      labelCol: { span: 4 },
-      wrapperCol: { span: 14 },
 
       onSubmit,
       value2,
 
-      data,
-      columns,
-      innerColumns,
-      innerData,
+      handleAdd,
+      handleEdit,
+      handleDel,
     };
   },
   components: {
     PlusOutlined,
     FileExcelOutlined,
     ReloadOutlined,
-
-    [RangePicker.name]: RangePicker,
-
-    [Modal.name]: Modal,
+    EditTwoTone,
+    DeleteTwoTone,
+    RightSquareTwoTone,
+    message,
   },
 });
 </script>

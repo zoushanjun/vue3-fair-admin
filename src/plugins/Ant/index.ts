@@ -57,10 +57,12 @@ const ant = {
     Vue.component(Selection.name, Selection);
     Vue.component(Row.name, Row);
     Vue.component(Radio.name, Radio);
+    Vue.component(Radio.Group.name, Radio.Group);
     Vue.component(DatePicker.name, DatePicker);
     Vue.component(Col.name, Col);
     Vue.component(Icon.name, Icon);
     Vue.component(Checkbox.name, Checkbox);
+    Vue.component(Checkbox.Group.name, Checkbox.Group);
     Vue.component(Switch.name, Switch);
     Vue.component(Drawer.name, Drawer);
     Vue.component(Popconfirm.name, Popconfirm);

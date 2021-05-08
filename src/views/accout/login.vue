@@ -108,7 +108,7 @@
             </a-input>
           </a-form-item>
           <a-form-item>
-            <a-input
+            <a-input-password
               v-model:value="formState.password"
               type="password"
               placeholder="请输入密码"
@@ -116,7 +116,7 @@
               <template #prefix
                 ><LockOutlined style="color: rgba(0, 0, 0, 0.25)"
               /></template>
-            </a-input>
+            </a-input-password>
           </a-form-item>
           <a-form-item>
             <VerifySlider @sliderSucess="subSliderPass"></VerifySlider>
