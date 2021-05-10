@@ -110,10 +110,54 @@
               style="height: 10px; background-color: #7cb305"
             />
 
-            <a
+            <a @click="handleJob(record)"
               ><a-tooltip title="作业" :color="'blue'"
                 ><PlaySquareTwoTone /></a-tooltip
             ></a>
+            <a-drawer
+              v-model:visible="jobDrawerVisible"
+              title="作业终端"
+              :width="600"
+              :body-style="{ paddingBottom: '80px' }"
+              :maskStyle="{
+                opacity: '0.1',
+                background: '#778899',
+                animation: 'none',
+              }"
+              @ok="drawerVisible = false"
+            >
+              <div>专线配置信息：</div>
+              <div>{{ editableData.orderConfig }}</div>
+              <a-divider />
+              <iframe
+                v-bind:src="nornirSvrUrl"
+                frameborder="0"
+                width="550"
+                height="350"
+                scrolling="auto"
+              ></iframe>
+              <!-- <xterm /> -->
+              <!-- <v-shell></v-shell> -->
+              <div
+                :style="{
+                  position: 'absolute',
+                  right: 0,
+                  bottom: 0,
+                  width: '100%',
+                  borderTop: '1px solid #e9e9e9',
+                  padding: '10px 16px',
+                  background: '#fff',
+                  textAlign: 'right',
+                  zIndex: 1,
+                }"
+              >
+                <a-button
+                  style="margin-right: 8px"
+                  @click="handleJobDrawerClose()"
+                  >关闭</a-button
+                >
+              </div>
+            </a-drawer>
 
             <a-divider
               type="vertical"
@@ -150,6 +194,8 @@ import moment from "moment";
 import { message } from "ant-design-vue";
 import { getFairList } from "../../network/fairApi";
 import { getOrderList, putOrder } from "../../network/orderApi";
+import workerConstructor from "*?worker";
+// import xterm from "../../components/xterm.vue";
 
 const columns = [
   {
@@ -283,7 +329,7 @@ export default defineComponent({
       console.log(e);
     };
 
-    const value = ref<string>("");
+    // const value = ref<string>("");
 
     // 作业资料编辑
     const formRef = ref<any>(null);
@@ -326,6 +372,23 @@ export default defineComponent({
       });
     };
 
+    const jobDrawerVisible = ref<boolean>(false);
+
+    const handleJob = (record: any) => {
+      jobDrawerVisible.value = true;
+      //复制数据
+      for (const k in record) {
+        editableData[k] = record[k];
+      }
+    };
+    const handleJobDrawerClose = () => {
+      jobDrawerVisible.value = false;
+    };
+    // const nornirpwd = window.btoa("Nornir123");
+    const nornirSvrUrl =
+      "http://192.168.64.91:8888?hostname=192.168.64.91&username=nornir&password=" +
+      window.btoa("Nornir123");
+
     return {
       fairData,
       onExpand,
@@ -346,6 +409,11 @@ export default defineComponent({
       //返回新增展会表单内容
       labelCol: { span: 5 },
       wrapperCol: { span: 18 },
+
+      handleJob,
+      jobDrawerVisible,
+      handleJobDrawerClose,
+      nornirSvrUrl,
     };
   },
   components: {
@@ -354,6 +422,7 @@ export default defineComponent({
     UpSquareTwoTone,
     EditTwoTone,
     message,
+    // xterm,
   },
 });
 </script>
