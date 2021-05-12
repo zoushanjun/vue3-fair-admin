@@ -75,10 +75,15 @@
                 <a-form-item label="专线配置信息：">
                   <a-textarea
                     v-model:value="editableData.orderConfig"
-                    :rows="4"
+                    :rows="2"
                   />
                 </a-form-item>
+                <a-form-item label="格式(中间空格)：">
+                  用户IP(/掩码) 用户IP网关 交换机IP 交换机端口 VLAN 上行速率
+                  下行速率 备注
+                </a-form-item>
               </a-form>
+
               <div
                 :style="{
                   position: 'absolute',
@@ -135,9 +140,10 @@
                 width="550"
                 height="350"
                 scrolling="auto"
-              ></iframe>
-              <!-- <xterm /> -->
-              <!-- <v-shell></v-shell> -->
+                ref="subframe"
+              >
+              </iframe>
+
               <div
                 :style="{
                   position: 'absolute',
@@ -182,7 +188,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, reactive, UnwrapRef } from "vue";
+import { defineComponent, ref, toRaw, onMounted, reactive } from "vue";
 import {
   PlaySquareTwoTone,
   MailTwoTone,
@@ -194,8 +200,6 @@ import moment from "moment";
 import { message } from "ant-design-vue";
 import { getFairList } from "../../network/fairApi";
 import { getOrderList, putOrder } from "../../network/orderApi";
-import workerConstructor from "*?worker";
-// import xterm from "../../components/xterm.vue";
 
 const columns = [
   {
@@ -287,7 +291,9 @@ export default defineComponent({
     //作业对应展会列表数据
     //页面挂载后读取展会列表
     const fairData = ref([]);
+    const subframe = ref(null);
     onMounted(() => {
+      // console.log("onMounted:" + subframe.value);
       getFairList()
         .then((res) => {
           // console.log(res);
@@ -329,12 +335,10 @@ export default defineComponent({
       console.log(e);
     };
 
-    // const value = ref<string>("");
-
     // 作业资料编辑
     const formRef = ref<any>(null);
     const editDrawerVisible = ref<boolean>(false);
-    // const editableData: UnwrapRef<Record<string, FormOrder>> = reactive({});
+
     const editableData = reactive({});
     const handleEdit = (record: any) => {
       editDrawerVisible.value = true;
@@ -342,8 +346,6 @@ export default defineComponent({
       for (const k in record) {
         editableData[k] = record[k];
       }
-      // console.log(fairCopiedName.value);
-      // console.log(editableData);
     };
 
     const handleEditDrawerClose = () => {
@@ -372,22 +374,33 @@ export default defineComponent({
       });
     };
 
+    const nornirSvrUrl = ref<string>();
     const jobDrawerVisible = ref<boolean>(false);
-
+    const orderLineConfig = ref<string>();
     const handleJob = (record: any) => {
+      // cmdParams.value = record.orderConfig;
+      debugger;
+      nornirSvrUrl.value =
+        "http://192.168.64.91:8888?hostname=192.168.64.91&username=nornir&password=" +
+        window.btoa("Nornir123") +
+        "&command=" +
+        "python3 vue_add_line.py" +
+        " " +
+        toRaw(record.orderConfig);
+
       jobDrawerVisible.value = true;
+      orderLineConfig.value = record.orderConfig;
       //复制数据
       for (const k in record) {
         editableData[k] = record[k];
       }
+
+      debugger;
     };
+
     const handleJobDrawerClose = () => {
       jobDrawerVisible.value = false;
     };
-    // const nornirpwd = window.btoa("Nornir123");
-    const nornirSvrUrl =
-      "http://192.168.64.91:8888?hostname=192.168.64.91&username=nornir&password=" +
-      window.btoa("Nornir123");
 
     return {
       fairData,
@@ -405,6 +418,7 @@ export default defineComponent({
       handleEditDrawerClose,
       handlePutOrder,
       handleSMS,
+      subframe,
 
       //返回新增展会表单内容
       labelCol: { span: 5 },
