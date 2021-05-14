@@ -137,7 +137,7 @@
               <iframe
                 v-bind:src="nornirSvrUrl"
                 frameborder="0"
-                width="550"
+                width="530"
                 height="350"
                 scrolling="auto"
                 ref="subframe"
@@ -379,7 +379,7 @@ export default defineComponent({
     const orderLineConfig = ref<string>();
     const handleJob = (record: any) => {
       // cmdParams.value = record.orderConfig;
-      debugger;
+      // debugger;
       nornirSvrUrl.value =
         "http://192.168.64.91:8888?hostname=192.168.64.91&username=nornir&password=" +
         window.btoa("Nornir123") +

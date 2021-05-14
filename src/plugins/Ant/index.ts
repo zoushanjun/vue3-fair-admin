@@ -24,6 +24,7 @@ import {
   Tooltip,
   Space,
   Tag,
+  List,
 } from "ant-design-vue";
 // import { Divider } from 'ant-design-vue/lib/vc-menu'
 
@@ -69,6 +70,8 @@ const ant = {
     Vue.component(Popconfirm.name, Popconfirm);
     Vue.component(Tooltip.name, Tooltip);
     Vue.component(Tag.name, Tag);
+    Vue.component(List.name, List);
+    Vue.component(List.Item.name, List.Item);
     // 以后想引入什么就引入什么
   },
 };

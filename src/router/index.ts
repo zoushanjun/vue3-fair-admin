@@ -76,7 +76,17 @@ const routes = [
         component: () => import("../views/permission/index.vue"),
         meta: {
           isShow: true,
-          title: "配置",
+          title: "权限",
+          auth: true,
+        },
+      },
+      {
+        path: "monitor",
+        name: "monitor",
+        component: () => import("../views/monitor/index.vue"),
+        meta: {
+          isShow: true,
+          title: "监控",
           auth: true,
         },
       },

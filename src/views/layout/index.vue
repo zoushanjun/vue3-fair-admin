@@ -5,6 +5,7 @@
         <img src="../../assets/logo.png" height="30" width="30" />展馆自动化系统
       </div>
       >
+      <!-- <a-menu theme="dark" mode="inline" v-model:selectedKeys="[this.$route.path]"> -->
       <a-menu theme="dark" mode="inline" v-model:selectedKeys="selectedKeys">
         <a-menu-item key="1">
           <router-link to="/dashboard">
@@ -46,6 +47,12 @@
           <router-link to="/permission">
             <TeamOutlined />
             <span>权限</span>
+          </router-link>
+        </a-menu-item>
+        <a-menu-item key="8">
+          <router-link to="/monitor">
+            <RadarChartOutlined />
+            <span>监控</span>
           </router-link>
         </a-menu-item>
       </a-menu>
@@ -124,9 +131,11 @@ import {
   LogoutOutlined,
   PoweroffOutlined,
   UserOutlined,
+  RadarChartOutlined,
 } from "@ant-design/icons-vue";
-import { defineComponent, ref, watch } from "vue";
+import { defineComponent, onMounted, ref, watch } from "vue";
 import router from "../../router/index";
+import { useStore } from "vuex";
 export default defineComponent({
   // 监听路由配合实现面包屑功能
   watch: {
@@ -141,9 +150,15 @@ export default defineComponent({
       router.push("/login");
     };
 
+    const store = useStore();
+    onMounted(() => {
+      store.dispatch("getSvrData"); //页面加载后使用vuex管理作业服务器相关配置
+    });
+
     return {
       // menuList,
       selectedKeys: ref<string[]>(["1"]),
+      // selectedKeys: this["$router"].path,
       collapsed: ref<boolean>(true),
       currentUser,
       logout,
@@ -165,6 +180,7 @@ export default defineComponent({
     LogoutOutlined,
     PoweroffOutlined,
     UserOutlined,
+    RadarChartOutlined,
   },
 });
 </script>

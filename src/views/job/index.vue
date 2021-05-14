@@ -9,7 +9,7 @@
       <!-- 2/收入统计选项卡内容 -->
       <a-tab-pane key="2" tab="数据回滚">
         <div></div>
-        <!-- 分割线 -->
+        <rollback />
         <a-divider />
       </a-tab-pane>
 
@@ -32,6 +32,7 @@
 import { defineComponent, ref } from "vue";
 
 import operation from "./operation.vue";
+import rollback from "./rollback.vue";
 export default defineComponent({
   name: "jobIndex",
   setup() {
@@ -42,25 +43,26 @@ export default defineComponent({
   },
   components: {
     operation,
+    rollback,
   },
 });
 </script>
-<style>
+<style lang="less">
 .card-container {
-  /* height: 100%; */
-  padding: 24px;
+  background: #f5f5f5;
   overflow: hidden;
-  /* background: #f5f5f5; */
+  margin: 0px;
+  padding: 24px;
 }
-
 .card-container > .ant-tabs-card > .ant-tabs-content {
-  height: 300px;
-  margin-top: -8px;
+  min-height: 280px;
+  // height: 120px;
+  margin-top: -16px;
 }
 
 .card-container > .ant-tabs-card > .ant-tabs-content > .ant-tabs-tabpane {
-  padding: 16px;
   background: #fff;
+  padding: 16px;
 }
 
 .card-container > .ant-tabs-card > .ant-tabs-bar {
@@ -68,12 +70,13 @@ export default defineComponent({
 }
 
 .card-container > .ant-tabs-card > .ant-tabs-bar .ant-tabs-tab {
-  background: transparent;
   border-color: transparent;
+  background: transparent;
 }
 
 .card-container > .ant-tabs-card > .ant-tabs-bar .ant-tabs-tab-active {
-  background: #fff;
   border-color: #fff;
+  background: #fff;
 }
 </style>
+
