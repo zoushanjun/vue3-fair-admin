@@ -55,7 +55,7 @@ const ant = {
     Vue.component(Form.name, Form);
     Vue.component(Form.Item.name, Form.Item);
     Vue.component(Select.name, Select);
-    Vue.component(Select.Option.name, Select.Option);
+
     Vue.component(Selection.name, Selection);
     Vue.component(Row.name, Row);
     Vue.component(Radio.name, Radio);

@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 点击新增按钮，弹出新增资产表单 -->
-    <a-button shape="round" @click="addDrawerVisible = true"
+    <a-button shape="round" @click="addInvent"
       ><template #icon><PlusOutlined /></template>新增</a-button
     >
 
@@ -75,7 +75,16 @@
               label="类别："
               name="category"
             >
-              <a-input v-model:value="form.category" />
+              <!-- <a-input v-model:value="form.category" /> -->
+              <a-select
+                v-model:value="form.category"
+                ref="select1"
+                @change="handleChangeCategory"
+              >
+                <a-select-option v-for="item in CategoryData" :key="item">{{
+                  item
+                }}</a-select-option>
+              </a-select>
             </a-form-item>
           </a-col>
           <a-col :span="12">
@@ -142,35 +151,23 @@
               name="devStatus"
             >
               <a-select
-                v-model:value="value1"
-                style="width: 120px"
-                @focus="focus"
+                v-model:value="form.devStatus"
                 ref="select"
                 @change="handleChange"
               >
-                <a-select-option value="jack">Jack</a-select-option>
-                <a-select-option value="lucy">Lucy</a-select-option>
-                <a-select-option value="disabled" disabled
-                  >Disabled</a-select-option
-                >
-                <a-select-option value="Yiminghe">yiminghe</a-select-option>
+                <a-select-option value="在线">在线</a-select-option>
+                <a-select-option value="离线">离线</a-select-option>
+                <a-select-option value="库存"> 库存</a-select-option>
+                <a-select-option value="项目"> 项目</a-select-option> >
+                <a-select-option value="维修">维修</a-select-option>
+                <a-select-option value="报废">报废</a-select-option>
+                <a-select-option value="外借">外借</a-select-option>
+                <a-select-option value="其它">其它</a-select-option>
               </a-select>
-
-              <!-- <Select
-                v-model:value="form.devStatus"
-                placeholder="请选择设备状态"
-              >
-                <Select.Option value="库存">库存</Select.Option>
-                <Select.Option value="在线">在线</Select.Option>
-                <Select.Option value="离线">离线</Select.Option>
-                <Select.Option value="维修">维修</Select.Option>
-                <Select.Option value="报废">报废</Select.Option>
-                <Select.Option value="外借">外接</Select.Option>
-                <Select.Option value="其它">其它</Select.Option>
-              </Select> -->
             </a-form-item>
           </a-col>
         </a-row>
+
         <div
           :style="{
             position: 'absolute',
@@ -188,7 +185,7 @@
           <a-button style="margin-right: 8px" @click="handleDrawerClose"
             >取消</a-button
           >
-          <a-button type="primary" @click="handleDrawerClose">提交</a-button>
+          <a-button type="primary" @click="handleSubmit(form)">提交</a-button>
         </div>
       </a-form>
     </a-drawer>
@@ -199,12 +196,12 @@
     >
     <!-- 资产管理页面搜索功能 -->
     <a-input-search
-      v-model:value="value"
+      v-model:value="searchValue"
       placeholder="请输入查询内容"
       style="width: 200px; margin-left: 200px"
       @search="onSearch"
     />
-    <a-button shape="round" style="margin-left: 10px"
+    <a-button shape="round" style="margin-left: 10px" @click="searchReset"
       ><template #icon><ReloadOutlined /></template>重置</a-button
     >
   </div>
@@ -222,17 +219,190 @@
   >
     <template #operation="{ record }">
       <span class="table-operation">
-        <a-tooltip title="查看" :color="'blue'">
+        <!-- <a-tooltip title="查看" :color="'blue'">
           <UpCircleTwoTone />
         </a-tooltip>
         <a-divider
           type="vertical"
           style="height: 10px; background-color: #7cb305"
-        />
+        /> -->
 
-        <a>
+        <a href="#" @click.prevent="handleEdit(record)">
           <a-tooltip title="编辑" :color="'blue'"><EditTwoTone /></a-tooltip
         ></a>
+        <a-drawer
+          v-model:visible="editDrawerVisible"
+          title="修改资产"
+          :width="600"
+          :scroll="{ y: 240 }"
+          :body-style="{ paddingBottom: '80px' }"
+          :maskStyle="{
+            opacity: '0.1',
+            background: '#778899',
+            animation: 'none',
+          }"
+          :destroyOnClose="true"
+          @ok="editDrawerVisible = false"
+        >
+          <a-form :model="form" :label-col="labelCol" :wrapper-col="wrapperCol">
+            <a-row :gutter="16">
+              <a-col :span="12">
+                <a-form-item
+                  :labelCol="{ span: 7 }"
+                  :wrapper-col="{ span: 15 }"
+                  label="设备名："
+                >
+                  <a-input v-model:value="editableData.deviceName" />
+                </a-form-item>
+              </a-col>
+              <a-col :span="12">
+                <a-form-item
+                  :labelCol="{ span: 7 }"
+                  :wrapper-col="{ span: 15 }"
+                  label="IP地址："
+                >
+                  <a-input v-model:value="editableData.ipAddr" />
+                </a-form-item>
+              </a-col>
+            </a-row>
+
+            <a-row :gutter="16">
+              <a-col :span="12">
+                <a-form-item
+                  :labelCol="{ span: 7 }"
+                  :wrapper-col="{ span: 15 }"
+                  label="序列号/MAC："
+                >
+                  <a-input v-model:value="editableData.SN_MAC" />
+                </a-form-item>
+              </a-col>
+              <a-col :span="12">
+                <a-form-item
+                  :labelCol="{ span: 7 }"
+                  :wrapper-col="{ span: 15 }"
+                  label="型号："
+                >
+                  <a-input v-model:value="editableData.model" />
+                </a-form-item>
+              </a-col>
+            </a-row>
+            <a-row :gutter="16">
+              <a-col :span="12">
+                <a-form-item
+                  :labelCol="{ span: 7 }"
+                  :wrapper-col="{ span: 15 }"
+                  label="类别："
+                >
+                  <a-select
+                    v-model:value="editableData.category"
+                    ref="select1"
+                    @change="handleChangeCategory"
+                  >
+                    <a-select-option v-for="item in CategoryData" :key="item">{{
+                      item
+                    }}</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+              <a-col :span="12">
+                <a-form-item
+                  :labelCol="{ span: 7 }"
+                  :wrapper-col="{ span: 15 }"
+                  label="安装位置："
+                >
+                  <a-input v-model:value="editableData.location" />
+                </a-form-item>
+              </a-col>
+            </a-row>
+            <a-row :gutter="16">
+              <a-col :span="12">
+                <a-form-item
+                  :labelCol="{ span: 7 }"
+                  :wrapper-col="{ span: 15 }"
+                  label="安装区域："
+                >
+                  <a-input v-model:value="editableData.area" />
+                </a-form-item>
+              </a-col>
+              <a-col :span="12">
+                <a-form-item
+                  :labelCol="{ span: 7 }"
+                  :wrapper-col="{ span: 15 }"
+                  label="用途："
+                >
+                  <a-input v-model:value="editableData.devUsage" />
+                </a-form-item>
+              </a-col>
+            </a-row>
+            <a-row :gutter="16">
+              <a-col :span="12">
+                <a-form-item
+                  :labelCol="{ span: 7 }"
+                  :wrapper-col="{ span: 15 }"
+                  label="登录账号："
+                >
+                  <a-input v-model:value="editableData.devAcct" />
+                </a-form-item>
+              </a-col>
+              <a-col :span="12">
+                <a-form-item
+                  :labelCol="{ span: 7 }"
+                  :wrapper-col="{ span: 15 }"
+                  label="登录密码："
+                >
+                  <a-input v-model:value="editableData.devPwd" />
+                </a-form-item>
+              </a-col>
+            </a-row>
+            <a-row :gutter="16">
+              <a-col :span="12">
+                <a-form-item
+                  :labelCol="{ span: 7 }"
+                  :wrapper-col="{ span: 15 }"
+                  label="状态："
+                >
+                  <a-select
+                    v-model:value="editableData.devStatus"
+                    ref="select"
+                    @change="handleChange"
+                  >
+                    <a-select-option value="在线">在线</a-select-option>
+                    <a-select-option value="离线">离线</a-select-option>
+                    <a-select-option value="库存"> 库存</a-select-option>
+                    <a-select-option value="项目"> 项目</a-select-option> >
+                    <a-select-option value="维修">维修</a-select-option>
+                    <a-select-option value="报废">报废</a-select-option>
+                    <a-select-option value="外借">外借</a-select-option>
+                    <a-select-option value="其它">其它</a-select-option>
+                  </a-select>
+                </a-form-item>
+              </a-col>
+            </a-row>
+          </a-form>
+          <div
+            :style="{
+              position: 'absolute',
+              right: 0,
+              bottom: 0,
+              width: '100%',
+              borderTop: '1px solid #e9e9e9',
+              padding: '10px 16px',
+              background: '#fff',
+              textAlign: 'right',
+              zIndex: 1,
+            }"
+          >
+            <a-button style="margin-right: 8px" @click="handleEditDrawerClose()"
+              >取消</a-button
+            >
+            <a-button
+              style="margin-right: 8px"
+              @click="handlePutInvt(editableData)"
+              >提交</a-button
+            >
+          </div>
+        </a-drawer>
+
         <a-divider
           type="vertical"
           style="height: 10px; background-color: #7cb305"
@@ -262,7 +432,7 @@ import {
   UnwrapRef,
   onMounted,
 } from "vue";
-import { message } from "ant-design-vue";
+import { message, Select } from "ant-design-vue";
 
 import {
   PlusOutlined,
@@ -278,7 +448,13 @@ import {
 import { ValidateErrorEntity } from "ant-design-vue/es/form/interface";
 
 // 引入与flask后端交互的http api方法
-import { getInvtList, delInventory } from "../../network/inventoryApi";
+import {
+  getInvtList,
+  delInventory,
+  postInvt,
+  putInvt,
+  getInvtCategoryList,
+} from "../../network/inventoryApi";
 
 // 新增资产弹出框表单内容接口
 interface FormInventory {
@@ -340,7 +516,7 @@ const Columns = [
     name: "location",
     dataIndex: "location",
     key: "location",
-    width: 80,
+
     ellipsis: true,
   },
   {
@@ -353,9 +529,9 @@ const Columns = [
   {
     title: "用途",
     name: "devUsage",
-    dataIndex: "devUseage",
-    key: "devUseage",
-    width: 50,
+    dataIndex: "devUsage",
+    key: "devUsage",
+    width: 80,
   },
   {
     title: "登录账号",
@@ -383,7 +559,7 @@ const Columns = [
     // name: 'title',
     dataIndex: "operation",
     key: "operation",
-    width: 150,
+    width: 100,
     slots: { customRender: "operation" },
   },
 ];
@@ -397,7 +573,8 @@ export default defineComponent({
 
     // 页面挂载后读取资产列表数据
     onMounted(() => {
-      getInvtList()
+      const params = { search: "" };
+      getInvtList(params)
         .then((res) => {
           // console.log(res);
           ListData.value = res.data;
@@ -407,7 +584,7 @@ export default defineComponent({
         });
     });
 
-    const value = ref<string>("");
+    const searchValue = ref<string>("");
 
     // 资产管理页面相关处理
     // 定义资产管理“新增”按钮弹出对话框初始状态
@@ -447,12 +624,27 @@ export default defineComponent({
         { required: false, message: "请输入有效的字符", trigger: "blur" },
         { max: 30, message: "字符长度最大为30", trigger: "blur" },
       ],
-      devStatus: [
-        { required: true, message: "请输入有效的字符", trigger: "blur" },
-        { min: 2, max: 30, message: "字符长度在2和30之间", trigger: "blur" },
-      ],
+      // devStatus: [
+      //   { required: true, message: "请输入有效的字符", trigger: "blur" },
+      //   { min: 2, max: 30, message: "字符长度在2和30之间", trigger: "blur" },
+      // ],
     };
 
+    const CategoryData = reactive([]);
+    // var CategoryData = [];
+    const addInvent = () => {
+      addDrawerVisible.value = true;
+      getInvtCategoryList()
+        .then((res) => {
+          //复制数据
+          for (const k in res.data) {
+            CategoryData[k] = res.data[k].category;
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
     const handleDrawerClose = () => {
       addDrawerVisible.value = false;
     };
@@ -465,9 +657,105 @@ export default defineComponent({
       console.log("submit!", toRaw(form));
     };
 
+    const handleSubmit = (form) => {
+      formRef.value
+        .validate()
+        .then(() => {
+          postInvt(form).then((res) => {
+            if (res.status == 200) {
+              message.success("新增资产成功！");
+              addDrawerVisible.value = false;
+              // 刷新当前页面
+              const params = { search: "" };
+              getInvtList(params)
+                .then((res) => {
+                  // console.log(res);
+                  ListData.value = res.data;
+                })
+                .catch((err) => {
+                  console.log(err);
+                });
+            }
+          });
+        })
+        .catch((error: ValidateErrorEntity<FormInventory>) => {
+          console.log("error", error);
+        });
+    };
+
     const onSearch = (searchValue: string) => {
-      console.log("use value", searchValue);
-      console.log("or use this.value", value.value);
+      const params = {
+        search: searchValue,
+      };
+      getInvtList(params)
+        .then((res) => {
+          // console.log(res);
+          ListData.value = res.data;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+
+    const searchReset = () => {
+      searchValue.value = "";
+      const params = {
+        search: "",
+      };
+      getInvtList(params)
+        .then((res) => {
+          // console.log(res);
+          ListData.value = res.data;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+
+    // 修改资产
+    const editDrawerVisible = ref<boolean>(false);
+    const editableData: UnwrapRef<Record<string, FormInventory>> = reactive({});
+    const handleEdit = (record: any) => {
+      //获取资产类别
+      getInvtCategoryList()
+        .then((res) => {
+          //复制数据
+          for (const k in res.data) {
+            CategoryData[k] = res.data[k].category;
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      editDrawerVisible.value = true;
+      //复制数据用于编辑
+      for (const k in record) {
+        editableData[k] = record[k];
+      }
+      console.log(editableData);
+    };
+
+    const handlePutInvt = (Data: object) => {
+      putInvt(Data).then((res) => {
+        if (res.status == 200) {
+          message.success("更新成功！");
+          editDrawerVisible.value = false;
+          // 刷新当前页面
+          const params = { search: "" };
+          getInvtList(params)
+            .then((res) => {
+              // console.log(res);
+              ListData.value = res.data;
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }
+      });
+    };
+
+    const handleEditDrawerClose = () => {
+      editDrawerVisible.value = false;
     };
 
     //删除资产,以json格式进行传递
@@ -476,7 +764,8 @@ export default defineComponent({
         if (res.status == 200) {
           message.success("删除成功！");
           // 刷新当前页面
-          getInvtList()
+          const params = { search: "" };
+          getInvtList(params)
             .then((res) => {
               ListData.value = res.data;
             })
@@ -487,11 +776,11 @@ export default defineComponent({
       });
     };
 
-    const focus = () => {
-      console.log("focus");
+    const handleChange = (value: string) => {
+      console.log(`selected ${value}`);
     };
 
-    const handleChange = (value: string) => {
+    const handleChangeCategory = (value: string) => {
       console.log(`selected ${value}`);
     };
 
@@ -507,16 +796,26 @@ export default defineComponent({
       handleDrawerClose,
       resetForm,
       handelDel,
+      addInvent,
+      CategoryData,
+      handleSubmit,
 
       onSubmit,
-      value,
+      searchValue,
       onSearch,
+      searchReset,
 
       ListData,
 
-      focus,
+      handleEdit,
+      editDrawerVisible,
+      editableData,
+      handleEditDrawerClose,
+      handlePutInvt,
+
       handleChange,
-      value1: ref("lucy"),
+      handleChangeCategory,
+      devStatus: ref("库存"),
     };
   },
   components: {
@@ -529,6 +828,8 @@ export default defineComponent({
     UpCircleTwoTone,
     EditTwoTone,
     DeleteTwoTone,
+    [Select.name]: Select,
+    ASelectOption: Select.Option,
   },
 });
 </script>
