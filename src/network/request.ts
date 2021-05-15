@@ -1,9 +1,10 @@
-import axios from 'axios';
+import { message } from "ant-design-vue";
+import axios from "axios";
 
 export function request(config) {
   const instance = axios.create({
     // 在请求地址前面加上baseURL
-    baseURL: 'http://localhost:5000',
+    baseURL: "http://localhost:5000",
     timeout: 5000,
   });
 
@@ -29,6 +30,8 @@ export function request(config) {
       return res;
     },
     (err) => {
+      console.log(err.status);
+      message.error("出现错误！");
       // 如果有需要授权才可以访问的接口，统一去login授权
       // 如果有错误，这里面会去处理，显示错误信息
     }

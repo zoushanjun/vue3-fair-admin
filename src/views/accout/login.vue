@@ -215,14 +215,14 @@ export default defineComponent({
     });
 
     const submitForm = (userInfo) => {
-      console.log(sliderPassStas.value);
+      // console.log(sliderPassStas.value);
       if (checked) {
-        // console.log("checked == true" + userInfo);
         //传入账号名，密码，和保存天数3个参数
         setCookie(userInfo.user, userInfo.password, 7);
         if (sliderPassStas.value == true) {
           // 提交后台验证账号密码
           login(userInfo).then((res) => {
+            // console.log("res" + res);
             if (res.status == 200) {
               message.success("登录成功！");
               sessionStorage.setItem("Login-user", userInfo.user);
