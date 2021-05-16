@@ -9,5 +9,7 @@ import Particles from "particles.vue3";
 import "ant-design-vue/dist/antd.css";
 // // 引入Antd配置文件
 import Antd from "./plugins/Ant";
+// import Blob from "./excel/Blob.js";
+// import Export2Excel from "./excel/Export2Excel.js";
 
 createApp(App).use(router).use(store).use(Antd).use(Particles).mount("#app");

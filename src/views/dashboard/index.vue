@@ -16,14 +16,33 @@
       </a-list>
     </div>
     <div class="item">
-      <img src="../../assets/summary.png" height="220" width="580" />
+      <div style="color: #00f; margin-left: 10px; margin-top: 10px">
+        总体运行概况：
+      </div>
+      <img
+        style="margin-left: 10px; margin-top: 10px"
+        src="../../assets/summary.png"
+        height="144"
+        width="534"
+      />
     </div>
     <div class="item">
-      <img src="../../assets/network.png" height="220" width="550" />
+      <div style="color: #00f; margin-left: 10px; margin-top: 10px">
+        网络设备：
+      </div>
+      <img src="../../assets/network.png" height="218" width="556" />
     </div>
 
     <div class="item">
-      <img src="../../assets/wireless.png" height="220" width="580" />
+      <div style="color: #00f; margin-left: 10px; margin-top: 10px">
+        无线客户端：
+      </div>
+      <img
+        style="margin-left: 10px; margin-top: 10px"
+        src="../../assets/wireless.png"
+        height="123"
+        width="525"
+      />
     </div>
   </div>
 </template>

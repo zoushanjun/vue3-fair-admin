@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p style="color: #00f">在下面的窗口中执行命令：python3 6_rollback2960.py</p>
+    <p style="color: #00f">请选择回滚对象进行操作(python3 6_rollback2960.py)</p>
   </div>
   <div>
     <iframe
@@ -23,7 +23,9 @@ export default defineComponent({
     onBeforeMount(() => {
       nornirSvrUrl.value =
         "http://192.168.64.91:8888?hostname=192.168.64.91&username=nornir&password=" +
-        window.btoa("Nornir123");
+        window.btoa("Nornir123") +
+        "&command=" +
+        "python3 6_rollback2960.py";
     });
 
     return {

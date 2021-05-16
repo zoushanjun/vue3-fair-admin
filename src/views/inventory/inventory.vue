@@ -493,7 +493,7 @@ const Columns = [
     name: "SN_MAC",
     dataIndex: "SN_MAC",
     key: "SN_MAC",
-    width: 150,
+    width: 130,
     ellipsis: true,
   },
   {
@@ -510,6 +510,7 @@ const Columns = [
     dataIndex: "category",
     key: "category",
     width: 80,
+    ellipsis: true,
   },
   {
     title: "安装位置",
@@ -784,9 +785,27 @@ export default defineComponent({
       console.log(`selected ${value}`);
     };
 
+    // const formatJson = (filterVal, jsonData) => {
+    //   return jsonData.map((v) => filterVal.map((j) => v[j]));
+    // };
+
+    // const export2Excel = () => {
+    //   require.ensure([], () => {
+    //     const { export_json_to_excel } = require("../../excel/Export2Excel"); //路径需要自行修改
+    //     let tHeader = ["设备名称", "IP地址"];
+    //     let filterVal = ["deviceName", "ipAddr"];
+    //     let tTitle = "广交会资产列表";
+    //     const list = ListData; //把table datasoure里的tableData存到list
+    //     const data = formatJson(filterVal, list);
+    //     export_json_to_excel(tHeader, data, tTitle);
+    //   });
+    // };
+
     return {
       labelCol: { span: 4 },
       wrapperCol: { span: 14 },
+
+      // export2Excel,
 
       Columns,
       formRef,

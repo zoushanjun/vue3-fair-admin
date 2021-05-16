@@ -13,7 +13,6 @@
 //   },
 //   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"]
 // }
-
 {
   "compilerOptions": {
     "target": "esnext",
@@ -32,15 +31,30 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "experimentalDecorators": true,
-    "lib": ["dom", "esnext"],
-    "types": ["vite/client"],
-    "typeRoots": ["./node_modules/@types/", "./types"],
+    "lib": [
+      "dom",
+      "esnext"
+    ],
+    "types": [
+      "vite/client"
+    ],
+    "typeRoots": [
+      "./node_modules/@types/",
+      "./types"
+    ],
     "incremental": true,
     "noImplicitAny": false,
     "skipLibCheck": true,
+    "tyoes": [
+      "node"
+    ],
     "paths": {
-      "/@/*": ["src/*"],
-      "/#/*": ["types/*"]
+      "/@/*": [
+        "src/*"
+      ],
+      "/#/*": [
+        "types/*"
+      ]
     }
   },
   "include": [
@@ -52,6 +66,9 @@
     "types/**/*.ts",
     "mock/**/*.ts"
   ],
-  "exclude": ["node_modules", "dist", "**/*.js"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.js"
+  ]
 }
-

@@ -379,7 +379,7 @@ export default defineComponent({
     const orderLineConfig = ref<string>();
     const handleJob = (record: any) => {
       // cmdParams.value = record.orderConfig;
-      // debugger;
+
       nornirSvrUrl.value =
         "http://192.168.64.91:8888?hostname=192.168.64.91&username=nornir&password=" +
         window.btoa("Nornir123") +
@@ -394,8 +394,6 @@ export default defineComponent({
       for (const k in record) {
         editableData[k] = record[k];
       }
-
-      debugger;
     };
 
     const handleJobDrawerClose = () => {
