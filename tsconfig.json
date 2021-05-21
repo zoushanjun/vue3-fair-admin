@@ -42,12 +42,12 @@
       "./node_modules/@types/",
       "./types"
     ],
-    "incremental": true,
+    // "incremental": true,
     "noImplicitAny": false,
     "skipLibCheck": true,
-    "tyoes": [
-      "node"
-    ],
+    // "types": [
+    //   "node"
+    // ],
     "paths": {
       "/@/*": [
         "src/*"

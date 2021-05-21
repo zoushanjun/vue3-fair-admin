@@ -326,12 +326,13 @@ export default defineComponent({
     const drawerVisible = ref<boolean>(false);
 
     //定义展会表单对象初始值
-    const form: UnwrapRef<FormFair> = reactive({
+    // const form: UnwrapRef<FormFair> = reactive({
+    const form = reactive({
       fairName: "",
       sponsorInfo: "",
-      prepareTime: undefined,
-      startTime: undefined,
-      endTime: undefined,
+      prepareTime: moment().format("L"),
+      startTime: moment().format("L"),
+      endTime: moment().format("L"),
       location: "",
     });
 

@@ -3,8 +3,6 @@
     <!-- 点线动画背景 -->
     <Particles
       id="tsparticles"
-      :particlesInit="particlesInit"
-      :particlesLoaded="particlesLoaded"
       :options="{
         background: {
           color: {

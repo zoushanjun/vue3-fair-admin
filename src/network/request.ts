@@ -5,6 +5,7 @@ export function request(config) {
   const instance = axios.create({
     // 在请求地址前面加上baseURL
     baseURL: "http://localhost:5000",
+    // baseURL: "http://192.168.64.92:5000",
     timeout: 5000,
   });
 
@@ -18,7 +19,9 @@ export function request(config) {
       // 直接放行
       return config;
     },
-    (err) => {}
+    (err) => {
+      console.log(err);
+    }
   );
 
   // 添加响应拦截器

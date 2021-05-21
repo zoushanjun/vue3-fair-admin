@@ -41,7 +41,7 @@
                 background: '#778899',
                 animation: 'none',
               }"
-              @ok="drawerVisible = false"
+              @ok="editDrawerVisible = false"
             >
               <a-form
                 ref="formRef"
@@ -129,7 +129,7 @@
                 background: '#778899',
                 animation: 'none',
               }"
-              @ok="drawerVisible = false"
+              @ok="jobDrawerVisible = false"
             >
               <div>专线配置信息：</div>
               <div>{{ editableData.orderConfig }}</div>
@@ -339,7 +339,14 @@ export default defineComponent({
     const formRef = ref<any>(null);
     const editDrawerVisible = ref<boolean>(false);
 
-    const editableData = reactive({});
+    const editableData = reactive({
+      orderLocation: "",
+      orderSvcItem: "",
+      orderTel: "",
+      orderRemark: "",
+      orderAccout: "",
+      orderConfig: "",
+    });
     const handleEdit = (record: any) => {
       editDrawerVisible.value = true;
       //复制数据用于编辑

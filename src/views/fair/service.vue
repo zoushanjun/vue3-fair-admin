@@ -180,8 +180,8 @@ import {
   DeleteTwoTone,
 } from "@ant-design/icons-vue";
 import { ValidateErrorEntity } from "ant-design-vue/es/form/interface";
-//引入时间配合日期选择器使用
-import moment, { Moment } from "moment";
+// //引入时间配合日期选择器使用
+// import moment, { Moment } from "moment";
 // 引入输入框、对话框、表格、表单等,Modal为弹出对话框
 import { DatePicker, message } from "ant-design-vue";
 

@@ -133,7 +133,7 @@ import {
   UserOutlined,
   RadarChartOutlined,
 } from "@ant-design/icons-vue";
-import { defineComponent, onMounted, ref, watch } from "vue";
+import { defineComponent, onMounted, ref } from "vue";
 import router from "../../router/index";
 import { useStore } from "vuex";
 export default defineComponent({

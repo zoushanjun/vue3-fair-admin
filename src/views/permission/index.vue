@@ -9,7 +9,20 @@
     </a-tabs>
   </div>
 </template>
+<script lang="ts">
+import { defineComponent, ref } from "vue";
 
+export default defineComponent({
+  name: "permissionIndex",
+  setup() {
+    return {
+      activeKey: ref("1"),
+    };
+  },
+
+  components: {},
+});
+</script>
 <style lang="less">
 .card-container {
   background: #f5f5f5;

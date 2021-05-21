@@ -58,14 +58,15 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, UnwrapRef, reactive } from "vue";
+import { defineComponent, reactive } from "vue";
 
 export default defineComponent({
   name: "smsgw",
   //定义表单对象初始值
 
   setup() {
-    const form: UnwrapRef<FormServer> = reactive({
+    // const form: UnwrapRef<FormServer> = reactive({
+    const form = reactive({
       smsHttp: "",
       smsMethod: "",
       smsEncode: "",
@@ -74,14 +75,14 @@ export default defineComponent({
       smsTemplet: "",
     });
     // 作业服务器表单内容接口
-    interface FormServer {
-      smsHttp: string;
-      smsMethod: string;
-      smsEncode: string;
-      srvAcct: string;
-      srvPwd: string;
-      smsTemplet: string;
-    }
+    // interface FormServer {
+    //   smsHttp: string;
+    //   smsMethod: string;
+    //   smsEncode: string;
+    //   srvAcct: string;
+    //   srvPwd: string;
+    //   smsTemplet: string;
+    // }
 
     return {
       labelCol: { span: 4 },

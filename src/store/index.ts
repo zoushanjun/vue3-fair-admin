@@ -21,6 +21,7 @@ export default createStore({
         getJobSvr(params).then((res) => {
           commit("SET_SvrData", res.data); //将数据存入VUEX
           resolve(res.data);
+          console.log(reject);
         });
       });
     },

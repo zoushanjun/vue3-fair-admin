@@ -19,7 +19,7 @@ import { defineComponent, ref, onBeforeMount } from "vue";
 export default defineComponent({
   name: "rollback",
   setup() {
-    const nornirSvrUrl = ref<String>();
+    const nornirSvrUrl = ref<string>();
     onBeforeMount(() => {
       nornirSvrUrl.value =
         "http://192.168.64.91:8888?hostname=192.168.64.91&username=nornir&password=" +

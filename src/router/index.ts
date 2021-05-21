@@ -114,6 +114,7 @@ router.beforeEach((to, from, next) => {
     } else {
       // 未登录则跳转到登陆界面，query:{ Rurl: to.fullPath}表示把当前路由信息传递过去方便登录后跳转回来；
       next("/login");
+      console.log(from);
     }
   } else {
     next();

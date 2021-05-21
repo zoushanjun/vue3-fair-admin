@@ -18,31 +18,31 @@
             <div v-if="editable">
               <a-input v-model:value="editableData.srvName" />
             </div>
-            <div v-else>{{ $store.state.jobSvrData.srvName || "" }}</div>
+            <div v-else>{{ svrData.srvName || "" }}</div>
           </a-form-item>
           <a-form-item label="IP地址：">
             <div v-if="editable">
               <a-input v-model:value="editableData.srvIp" />
             </div>
-            <div v-else>{{ $store.state.jobSvrData.srvIp || "" }}</div>
+            <div v-else>{{ svrData.srvIp || "" }}</div>
           </a-form-item>
           <a-form-item label="端口号：">
             <div v-if="editable">
               <a-input v-model:value="editableData.srvPort" />
             </div>
-            <div v-else>{{ $store.state.jobSvrData.srvPort || "" }}</div>
+            <div v-else>{{ svrData.srvPort || "" }}</div>
           </a-form-item>
           <a-form-item label="登录账号：">
             <div v-if="editable">
               <a-input v-model:value="editableData.srvAcct" />
             </div>
-            <div v-else>{{ $store.state.jobSvrData.srvAcct || "" }}</div>
+            <div v-else>{{ svrData.srvAcct || "" }}</div>
           </a-form-item>
           <a-form-item label="登录密码：">
             <div v-if="editable">
               <a-input-password v-model:value="editableData.srvPwd" />
             </div>
-            <div v-else>{{ $store.state.jobSvrData.srvPwd || "" }}</div>
+            <div v-else>{{ svrData.srvPwd || "" }}</div>
           </a-form-item>
         </a-form>
       </a-col>
@@ -67,7 +67,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, UnwrapRef, reactive } from "vue";
+import { defineComponent, ref, UnwrapRef, reactive, computed } from "vue";
 import { getJobSvr, putJobSvr } from "../../network/setup";
 import { message } from "ant-design-vue";
 import {
@@ -98,7 +98,13 @@ export default defineComponent({
     }
 
     const editable = ref<boolean>(false);
-    const editableData = reactive({});
+    const editableData = reactive({
+      srvName: "",
+      srvIp: "",
+      srvPort: "",
+      srvAcct: "",
+      srvPwd: "",
+    });
     const edit = () => {
       const params = {
         svrId: 1,
@@ -138,6 +144,7 @@ export default defineComponent({
       edit,
       update,
       cancel,
+      svrData: computed(() => store.state.jobSvrData),
     };
   },
   components: {

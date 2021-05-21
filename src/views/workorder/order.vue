@@ -60,7 +60,7 @@
         >
           <a-form-item label="展会名称："> {{ fairCopiedName }} </a-form-item>
           <a-form-item v-if="false">
-            <a-input v-model:value="form.fairCopiedId" />
+            <a-input v-model:value="fairCopiedId" />
           </a-form-item>
 
           <a-form-item label="安装地点：" ref="orderLocation">
@@ -314,9 +314,7 @@
                   @click="handleAssignDrawerClose()"
                   >取消</a-button
                 >
-                <a-button
-                  style="margin-right: 8px"
-                  @click="handlePutAssign(editableData)"
+                <a-button style="margin-right: 8px" @click="handlePutAssign()"
                   >提交</a-button
                 >
               </div>
@@ -334,7 +332,6 @@ import {
   ref,
   UnwrapRef,
   reactive,
-  toRaw,
   toRefs,
   watch,
   onMounted,
@@ -698,6 +695,11 @@ export default defineComponent({
 
     const handleAssign = (e: MouseEvent) => {
       assignDrawerVisible.value = true;
+      console.log(e);
+    };
+
+    const handlePutAssign = () => {
+      console.log("assign");
     };
 
     const state = reactive({
@@ -750,6 +752,7 @@ export default defineComponent({
       editableData,
       handleEditDrawerClose,
       handlePutOrder,
+      fairCopiedId,
 
       handleAssign,
       assignDrawerVisible,
@@ -762,6 +765,7 @@ export default defineComponent({
       onSearch,
 
       value2,
+      handlePutAssign,
 
       handleAdd,
       handleEdit,

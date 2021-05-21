@@ -39,30 +39,56 @@
     size="small"
     bordered
   >
-    <template #category="{ text, record }">
-      <div class="editable-cell">
-        <div v-if="editableData[record.id]" class="editable-cell-input-wrapper">
-          <a-input
-            v-model:value="editableData[record.id].category"
-            @pressEnter="handleUpdate(record.id)"
-          />
-          <check-outlined
-            class="editable-cell-icon-check"
-            @click="handleUpdate(record.id)"
-          />
-          <close-outlined
-            class="editable-cell-icon-cancel"
-            @click="cancel(record.id)"
-          />
-        </div>
-        <div v-else class="editable-cell-text-wrapper">
-          {{ text || " " }}
-          <edit-outlined class="editable-cell-icon" @click="edit(record.id)" />
-        </div>
-      </div>
-    </template>
     <template #operation="{ record }">
       <span class="table-operation">
+        <a href="#" @click.prevent="handleEdit(record)"
+          ><a-tooltip title="编辑" :color="'blue'"><EditTwoTone /></a-tooltip
+        ></a>
+        <a-drawer
+          v-model:visible="editDrawerVisible"
+          title="修改类别"
+          :width="600"
+          :scroll="{ y: 240 }"
+          :body-style="{ paddingBottom: '80px' }"
+          :maskStyle="{
+            opacity: '0.1',
+            background: '#778899',
+            animation: 'none',
+          }"
+          :destroyOnClose="true"
+          @ok="editDrawerVisible = false"
+        >
+          <a-form :model="form" :label-col="labelCol" :wrapper-col="wrapperCol">
+            <a-form-item label="类别：">
+              <a-input v-model:value="editableData.category" />
+            </a-form-item>
+          </a-form>
+          <div
+            :style="{
+              position: 'absolute',
+              right: 0,
+              bottom: 0,
+              width: '100%',
+              borderTop: '1px solid #e9e9e9',
+              padding: '10px 16px',
+              background: '#fff',
+              textAlign: 'right',
+              zIndex: 1,
+            }"
+          >
+            <a-button style="margin-right: 8px" @click="handleEditDrawerClose()"
+              >取消</a-button
+            >
+            <a-button style="margin-right: 8px" @click="handlePut"
+              >提交</a-button
+            >
+          </div>
+        </a-drawer>
+
+        <a-divider
+          type="vertical"
+          style="height: 10px; background-color: #7cb305"
+        />
         <a-popconfirm
           title="确定要删除吗?"
           ok-text="是"
@@ -80,20 +106,14 @@
   </a-table>
 </template>
 <script lang="ts">
-import {
-  defineComponent,
-  ref,
-  reactive,
-  toRaw,
-  UnwrapRef,
-  onMounted,
-} from "vue";
+import { defineComponent, ref, reactive, UnwrapRef, onMounted } from "vue";
 
 import {
   PlusOutlined,
   FileExcelOutlined,
   ReloadOutlined,
   CheckOutlined,
+  EditTwoTone,
   EditOutlined,
   CloseOutlined,
   DeleteTwoTone,
@@ -108,7 +128,6 @@ import {
   deleteInvtCategory,
   putInvtCategory,
 } from "../../network/inventoryApi";
-import { cloneDeep } from "lodash-es"; //使用lodash.cloneDeep实现深拷贝
 
 // 定义资产类别列表表头
 const Columns = [
@@ -149,10 +168,10 @@ export default defineComponent({
       getInvtCategoryList()
         .then((res) => {
           categoryListData.value = res.data;
-          // console.log(res.data);
-          // console.log(categoryListData.value);
         })
-        .catch((err) => {});
+        .catch((err) => {
+          console.log(err);
+        });
     });
 
     const value = ref<string>("");
@@ -194,13 +213,13 @@ export default defineComponent({
                 .then((res) => {
                   categoryListData.value = res.data;
                 })
-                .catch((err) => {});
+                .catch((err) => {
+                  console.log(err);
+                });
             } else {
               message.warning("类别已经存在");
               return;
             }
-            // console.log(res.statusText);
-            // console.log(res.status);
           });
         })
         .catch((error: ValidateErrorEntity<FormCategory>) => {
@@ -209,30 +228,45 @@ export default defineComponent({
     };
 
     // 修改类别
+    const editDrawerVisible = ref<boolean>(false);
+    const editable = ref<boolean>(false);
     const editableData: UnwrapRef<Record<string, FormCategory>> = reactive({});
-    const edit = (id: number) => {
-      editableData[id] = cloneDeep(
-        categoryListData.value.filter((item) => id === item.id)[0]
-      );
+    const handleEdit = (record: any) => {
+      editDrawerVisible.value = true;
+      for (const k in record) {
+        editableData[k] = record[k];
+      }
+      // console.log(editableData);
     };
-    const handleUpdate = (id: number) => {
-      Object.assign(
-        categoryListData.value.filter((item) => id === item.id)[0],
-        editableData[id]
-      );
+
+    const handleEditDrawerClose = () => {
+      editDrawerVisible.value = false;
+    };
+
+    const handlePut = () => {
       const params = {
-        id: id,
-        categoryName: editableData[id].category,
+        id: editableData.id,
+        categoryName: editableData.category,
       };
-      console.log(params);
+      // console.log(params);
       putInvtCategory(params)
         .then((res) => {
           if (res.status == 200) {
             message.success(res.data.message);
-            delete editableData[id];
+            editDrawerVisible.value = false; //关闭抽屉
+            // 刷新当前页面
+            getInvtCategoryList()
+              .then((res) => {
+                categoryListData.value = res.data;
+              })
+              .catch((err) => {
+                console.log(err);
+              });
           }
         })
-        .catch((err) => {});
+        .catch((err) => {
+          console.log(err);
+        });
     };
 
     const cancel = (id: number) => {
@@ -249,27 +283,18 @@ export default defineComponent({
             .then((res) => {
               categoryListData.value = res.data;
             })
-            .catch((err) => {});
+            .catch((err) => {
+              console.log(err);
+            });
         }
       });
     };
     // 取消删除
     const cancelDelete = (e: MouseEvent) => {
-      // console.log(e);
-      // message.error('Click on No');
-    };
-
-    const onSubmit = () => {
-      console.log("submit!", toRaw(formInventory));
-    };
-
-    const onSearch = (searchValue: string) => {
-      console.log("use value", searchValue);
-      console.log("or use this.value", value.value);
+      console.log(e);
     };
 
     return {
-      activeKey: ref("2"),
       labelCol: { span: 4 },
       wrapperCol: { span: 14 },
 
@@ -281,17 +306,18 @@ export default defineComponent({
       handleAdd,
       handelDel,
       handleCloseDrawer,
-      edit,
-      handleUpdate,
+      handleEdit,
+      handlePut,
       cancel,
+      editable,
       editableData,
       cancelDelete,
+      editDrawerVisible,
+      handleEditDrawerClose,
 
-      onSubmit,
       value,
-      onSearch,
-      Columns,
 
+      Columns,
       categoryListData,
     };
   },
@@ -300,6 +326,7 @@ export default defineComponent({
     FileExcelOutlined,
     ReloadOutlined,
     CheckOutlined,
+    EditTwoTone,
     EditOutlined,
     CloseOutlined,
     DeleteTwoTone,
