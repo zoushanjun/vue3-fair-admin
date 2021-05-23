@@ -25,6 +25,7 @@ import {
   Space,
   Tag,
   List,
+  InputNumber,
 } from "ant-design-vue";
 // import { Divider } from 'ant-design-vue/lib/vc-menu'
 
@@ -48,6 +49,7 @@ const ant = {
     Vue.component(Input.Search.name, Input.Search);
     Vue.component(Input.Password.name, Input.Password);
     Vue.component(Input.TextArea.name, Input.TextArea);
+    Vue.component(InputNumber.name, InputNumber);
     Vue.component(Badge.name, Badge);
     Vue.component(Dropdown.name, Dropdown);
     Vue.component(Steps.name, Steps);

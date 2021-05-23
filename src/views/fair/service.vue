@@ -233,9 +233,9 @@ const Columns = [
 // 新增服务弹出框表单内容接口
 interface FormService {
   serviceName: string;
-  price: string;
+  price: number;
   description: string;
-  commision: string;
+  commision: number;
 }
 
 // 将rangepicker定位为DatePicker类型
@@ -264,9 +264,9 @@ export default defineComponent({
     //定义服务表单对象初始值
     const form: UnwrapRef<FormService> = reactive({
       serviceName: "",
-      price: "",
+      price: 0,
       description: "",
-      commision: "",
+      commision: 0,
     });
 
     // 服务选项卡-逻辑处理

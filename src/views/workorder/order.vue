@@ -3,13 +3,13 @@
 
   <div>
     <a-input-search
-      v-model:value="value"
-      placeholder="请输入工单关键词"
+      v-model:value="searchValue"
+      placeholder="请输入展会关键词"
       style="width: 200px"
-      @search="onSearch"
+      @search="handleSearch()"
     />
 
-    <a-button shape="round" style="margin-left: 10px"
+    <a-button shape="round" style="margin-left: 10px" @click="reload"
       ><template #icon><ReloadOutlined /></template>重置</a-button
     >
 
@@ -70,7 +70,28 @@
             />
           </a-form-item>
           <a-form-item label="服务项目：">
-            <a-input v-model:value="form.orderSvcItem" placeholder="服务项目" />
+            <!-- <a-input v-model:value="form.orderSvcItem" placeholder="服务项目" /> -->
+            <a-select
+              v-model:value="form.orderSvcItem"
+              ref="select"
+              @change="handleChangeService"
+            >
+              <a-select-option
+                v-for="item in serviceData"
+                :key="item.serviceName"
+              >
+                {{ item.serviceName }}
+              </a-select-option>
+            </a-select>
+          </a-form-item>
+
+          <a-form-item label="数量：">
+            <a-input-number
+              v-model:value="form.orderNum"
+              :min="1"
+              :max="100"
+              @change="onChangeNum"
+            />
           </a-form-item>
           <a-form-item label="费用：">
             <a-input
@@ -182,7 +203,28 @@
                   <a-input v-model:value="editableData.orderLocation" />
                 </a-form-item>
                 <a-form-item label="服务项目：">
-                  <a-input v-model:value="editableData.orderSvcItem" />
+                  <!-- <a-input v-model:value="editableData.orderSvcItem" /> -->
+                  <a-select
+                    v-model:value="editableData.orderSvcItem"
+                    ref="select"
+                    @change="handleEditChangeService"
+                  >
+                    <a-select-option
+                      v-for="item in serviceData"
+                      :key="item.serviceName"
+                    >
+                      {{ item.serviceName }}
+                    </a-select-option>
+                  </a-select>
+                </a-form-item>
+
+                <a-form-item label="数量：">
+                  <a-input-number
+                    v-model:value="editableData.orderNum"
+                    :min="1"
+                    :max="100"
+                    @change="onEditChangeNum"
+                  />
                 </a-form-item>
                 <a-form-item label="费用：">
                   <a-input
@@ -333,18 +375,20 @@ import {
   UnwrapRef,
   reactive,
   toRefs,
+  toRaw,
   watch,
   onMounted,
 } from "vue";
 import moment, { Moment } from "moment";
-import { getFairList } from "../../network/fairApi";
+import { getFairList, getServiceList } from "../../network/fairApi";
+
 import {
   getOrderList,
   postOrder,
   deleteOrder,
   putOrder,
 } from "../../network/orderApi";
-import { message } from "ant-design-vue";
+import { message, Select } from "ant-design-vue";
 import {
   PlusOutlined,
   FileExcelOutlined,
@@ -415,21 +459,24 @@ const innerColumns = [
     dataIndex: "orderLocation",
     key: "orderLocation",
     ellipsis: true,
+    sorter: (a, b) => a.orderLocation.localeCompare(b.orderLocation),
   },
   {
     title: "服务项目",
     dataIndex: "orderSvcItem",
     key: "orderSvcItem",
-    width: 200,
+    width: 150,
     ellipsis: true,
   },
-  { title: "费用", dataIndex: "orderCharge", key: "orderCharge", width: 100 },
+  { title: "数量", dataIndex: "orderNum", key: "orderNum", width: 50 },
+  { title: "费用", dataIndex: "orderCharge", key: "orderCharge", width: 80 },
   {
     title: "客户名称",
     dataIndex: "orderCustom",
     key: "orderCustom",
     width: 100,
     ellipsis: true,
+    sorter: (a, b) => a.orderCustom.localeCompare(b.orderCustom),
   },
   {
     title: "联系人",
@@ -438,7 +485,13 @@ const innerColumns = [
     width: 80,
   },
   { title: "联系电话", dataIndex: "orderTel", key: "orderTel", width: 100 },
-  { title: "工单状态", dataIndex: "orderStaus", key: "orderStaus", width: 80 },
+  {
+    title: "工单状态",
+    dataIndex: "orderStaus",
+    key: "orderStaus",
+    width: 100,
+    sorter: (a, b) => a.orderStaus.localeCompare(b.orderStaus),
+  },
   {
     title: "工单来源",
     dataIndex: "orderOrigin",
@@ -466,7 +519,8 @@ interface FormOrder {
   fairId: number;
   orderLocation: string;
   orderSvcItem: string;
-  orderCharge: string;
+  orderNum: number;
+  orderCharge: number;
   orderCustom: string;
   orderContacts: string;
   orderTel: string;
@@ -478,16 +532,10 @@ interface FormOrder {
 export default defineComponent({
   name: "order",
   setup() {
-    // const { Option } = Select;
-    const value = ref<string>("");
+    const searchValue = ref<string>("");
 
     // 定义弹出框举办地点变量
     const value2 = ref<string>("");
-
-    const onSearch = (searchValue: string) => {
-      console.log("use value", searchValue);
-      console.log("or use this.value", value.value);
-    };
 
     // 展会复选框逻辑处理
     const rowSelection = {
@@ -531,6 +579,29 @@ export default defineComponent({
         });
     });
 
+    const handleSearch = () => {
+      if (toRaw(searchValue.value) == "") {
+        message.warning("请输入查询条件！");
+        return;
+      }
+
+      const params = {
+        fairname: toRaw(searchValue.value),
+        starttime: "",
+        endtime: "",
+      };
+
+      // getFairList(params);
+      getFairList(params)
+        .then((res) => {
+          fairData.value = res.data;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      // message.success('查询成功！');
+    };
+
     //点击展开“+”符号
     const orderData = ref([]);
     const expandedRowKeys = ref([Number]);
@@ -556,11 +627,34 @@ export default defineComponent({
       }
     };
 
+    const reload = () => {
+      searchValue.value = "";
+      getFairList()
+        .then((res) => {
+          // console.log(res);
+          fairData.value = res.data;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
     // 增加工单
     const drawerVisible = ref<boolean>(false);
     const fairCopiedName = ref<string>("");
     const fairCopiedId = ref<number>();
+    const serviceData = reactive([]); //定义服务列表数据
     const handleAdd = (record: any) => {
+      getServiceList()
+        .then((res) => {
+          //复制数据
+          for (const k in res.data) {
+            serviceData[k] = res.data[k];
+          }
+          // console.log(serviceData);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
       drawerVisible.value = true;
       //复制展会名称和ID
       fairCopiedName.value = record.fairName;
@@ -568,12 +662,34 @@ export default defineComponent({
       form.fairId = record.id;
     };
 
+    const handleChangeService = (value: string) => {
+      // console.log(toRaw(serviceData));
+      for (let i = 0; i < serviceData.length; i++) {
+        if (serviceData[i]["serviceName"] == value) {
+          form.orderCharge = serviceData[i]["price"] * form.orderNum;
+          break;
+        }
+      }
+      // console.log(`selected ${value}`);
+      // console.log(form.orderCharge);
+    };
+
+    const onChangeNum = () => {
+      for (let j = 0; j < serviceData.length; j++) {
+        if (serviceData[j]["serviceName"] == form.orderSvcItem) {
+          form.orderCharge = serviceData[j]["price"] * form.orderNum;
+          break;
+        }
+      }
+    };
+
     //定义表单对象初始值
     const form: UnwrapRef<FormOrder> = reactive({
       fairId: 0,
       orderLocation: "",
       orderSvcItem: "",
-      orderCharge: "",
+      orderNum: 1,
+      orderCharge: 0,
       orderCustom: "",
       orderContacts: "",
       orderTel: "",
@@ -617,7 +733,8 @@ export default defineComponent({
       // formRef.value.resetFields();
       form.orderLocation = "";
       form.orderSvcItem = "";
-      form.orderCharge = "";
+      form.orderNum = 1;
+      form.orderCharge = 0;
       form.orderCustom = "";
       form.orderContacts = "";
       form.orderTel = "";
@@ -632,15 +749,58 @@ export default defineComponent({
 
     // 修改工单
     const editDrawerVisible = ref<boolean>(false);
-    const editableData: UnwrapRef<Record<string, FormOrder>> = reactive({});
+    // const editableData: UnwrapRef<Record<string, FormOrder>> = reactive({});
+    const editableData = reactive({
+      orderLocation: "",
+      orderSvcItem: "",
+      orderNum: 1,
+      orderCharge: 0,
+      orderCustom: "",
+      orderContacts: "",
+      orderTel: "",
+      orderStaus: "未指派",
+      orderOrigin: "展务通",
+      orderRemark: "",
+    });
     const handleEdit = (record: any) => {
       editDrawerVisible.value = true;
+      getServiceList()
+        .then((res) => {
+          //复制数据
+          for (const k in res.data) {
+            serviceData[k] = res.data[k];
+          }
+          // console.log(serviceData);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
       //复制数据用于编辑
       for (const k in record) {
         editableData[k] = record[k];
+        // console.log(editableData);
       }
       // console.log(fairCopiedName.value);
-      // console.log(editableData);
+    };
+
+    const handleEditChangeService = (value: string) => {
+      for (let i = 0; i < serviceData.length; i++) {
+        if (serviceData[i]["serviceName"] == value) {
+          editableData.orderCharge =
+            serviceData[i]["price"] * editableData.orderNum;
+          break;
+        }
+      }
+    };
+
+    const onEditChangeNum = () => {
+      for (let j = 0; j < serviceData.length; j++) {
+        if (serviceData[j]["serviceName"] == editableData.orderSvcItem) {
+          editableData.orderCharge =
+            serviceData[j]["price"] * editableData.orderNum;
+          break;
+        }
+      }
     };
 
     const handleEditDrawerClose = () => {
@@ -727,6 +887,7 @@ export default defineComponent({
     };
 
     return {
+      reload,
       rowSelection,
       fairData,
       columns,
@@ -746,7 +907,11 @@ export default defineComponent({
       //新增工单form样式
       labelCol: { span: 4 },
       wrapperCol: { span: 20 },
-      // Option,
+      serviceData,
+      handleChangeService,
+      onChangeNum,
+      handleEditChangeService,
+      onEditChangeNum,
 
       editDrawerVisible,
       editableData,
@@ -761,8 +926,8 @@ export default defineComponent({
       plainOptions,
       onCheckAllChange,
 
-      value,
-      onSearch,
+      searchValue,
+      handleSearch,
 
       value2,
       handlePutAssign,
@@ -780,6 +945,8 @@ export default defineComponent({
     DeleteTwoTone,
     RightSquareTwoTone,
     message,
+    [Select.name]: Select,
+    ASelectOption: Select.Option,
   },
 });
 </script>
