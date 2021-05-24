@@ -13,9 +13,9 @@
       ><template #icon><ReloadOutlined /></template>重置</a-button
     >
 
-    <a-button shape="round" style="margin-left: 10px"
+    <!-- <a-button shape="round" style="margin-left: 10px"
       ><template #icon><FileExcelOutlined /></template>导出</a-button
-    >
+    > -->
   </div>
   <!-- 分割线 -->
   <a-divider />
@@ -23,7 +23,6 @@
   <a-table
     :columns="columns"
     :data-source="fairData"
-    :row-selection="rowSelection"
     :rowKey="(record) => record.id"
     :expandedRowKeys="expandedRowKeys"
     @expand="onExpand"
@@ -34,6 +33,15 @@
       <a @click="handleAdd(record)">
         <a-tooltip title="增加工单" :color="'blue'">
           <PlusOutlined />
+        </a-tooltip>
+      </a>
+      <a-divider
+        type="vertical"
+        style="height: 10px; background-color: #7cb305"
+      />
+      <a @click="handleExpToExcel(record)">
+        <a-tooltip title="导出excel" :color="'blue'">
+          <FileExcelOutlined />
         </a-tooltip>
       </a>
 
@@ -58,18 +66,20 @@
           :wrapper-col="wrapperCol"
           :rules="rules"
         >
-          <a-form-item label="展会名称："> {{ fairCopiedName }} </a-form-item>
+          <a-form-item label="展会名称：" class="bottom">
+            {{ fairCopiedName }}
+          </a-form-item>
           <a-form-item v-if="false">
             <a-input v-model:value="fairCopiedId" />
           </a-form-item>
 
-          <a-form-item label="安装地点：" ref="orderLocation">
+          <a-form-item label="安装地点：" ref="orderLocation" class="bottom">
             <a-input
               v-model:value="form.orderLocation"
               placeholder="安装地点"
             />
           </a-form-item>
-          <a-form-item label="服务项目：">
+          <a-form-item label="服务项目：" class="bottom">
             <!-- <a-input v-model:value="form.orderSvcItem" placeholder="服务项目" /> -->
             <a-select
               v-model:value="form.orderSvcItem"
@@ -85,7 +95,14 @@
             </a-select>
           </a-form-item>
 
-          <a-form-item label="数量：">
+          <a-form-item label="单价：" class="bottom">
+            <a-input
+              addon-before="￥"
+              v-model:value="form.orderUnitPrice"
+              placeholder="单价"
+              @change="onChangeNum"
+          /></a-form-item>
+          <a-form-item label="数量：" class="bottom">
             <a-input-number
               v-model:value="form.orderNum"
               :min="1"
@@ -93,24 +110,24 @@
               @change="onChangeNum"
             />
           </a-form-item>
-          <a-form-item label="费用：">
+          <a-form-item label="费用：" class="bottom">
             <a-input
               addon-before="￥"
               v-model:value="form.orderCharge"
               placeholder="费用"
             />
           </a-form-item>
-          <a-form-item label="客户名称：">
+          <a-form-item label="客户名称：" class="bottom">
             <a-input v-model:value="form.orderCustom" placeholder="客户名称" />
           </a-form-item>
-          <a-form-item label="联系人：">
+          <a-form-item label="联系人：" class="bottom">
             <a-input v-model:value="form.orderContacts" placeholder="联系人" />
           </a-form-item>
-          <a-form-item label="联系电话：">
+          <a-form-item label="联系电话：" class="bottom">
             <a-input v-model:value="form.orderTel" placeholder="联系电话" />
           </a-form-item>
 
-          <a-form-item label="工单状态：">
+          <a-form-item label="工单状态：" class="bottom">
             <!-- <a-input v-model:value="form.orderStaus" placeholder="工单状态" /> -->
             <a-radio-group
               name="radioGroup"
@@ -124,11 +141,11 @@
             </a-radio-group>
           </a-form-item>
 
-          <a-form-item label="工单来源：">
+          <a-form-item label="工单来源：" class="bottom">
             <a-input v-model:value="form.orderOrigin" defaultValue="展务通" />
           </a-form-item>
 
-          <a-form-item label="备注：">
+          <a-form-item label="备注：" class="bottom">
             <a-input v-model:value="form.orderRemark" placeholder="备注" />
           </a-form-item>
         </a-form>
@@ -195,14 +212,14 @@
                 :wrapper-col="wrapperCol"
                 :rules="rules"
               >
-                <a-form-item label="展会名称：">
+                <a-form-item label="展会名称：" class="bottom">
                   {{ fairCopiedName }}
                 </a-form-item>
 
-                <a-form-item label="安装地点：">
+                <a-form-item label="安装地点：" class="bottom">
                   <a-input v-model:value="editableData.orderLocation" />
                 </a-form-item>
-                <a-form-item label="服务项目：">
+                <a-form-item label="服务项目：" class="bottom">
                   <!-- <a-input v-model:value="editableData.orderSvcItem" /> -->
                   <a-select
                     v-model:value="editableData.orderSvcItem"
@@ -217,8 +234,15 @@
                     </a-select-option>
                   </a-select>
                 </a-form-item>
+                <a-form-item label="单价：" class="bottom">
+                  <a-input
+                    addon-before="￥"
+                    v-model:value="editableData.orderUnitPrice"
+                    @change="changeEditUnitPrice"
+                  />
+                </a-form-item>
 
-                <a-form-item label="数量：">
+                <a-form-item label="数量：" class="bottom">
                   <a-input-number
                     v-model:value="editableData.orderNum"
                     :min="1"
@@ -226,23 +250,23 @@
                     @change="onEditChangeNum"
                   />
                 </a-form-item>
-                <a-form-item label="费用：">
+                <a-form-item label="费用：" class="bottom">
                   <a-input
                     addon-before="￥"
                     v-model:value="editableData.orderCharge"
                   />
                 </a-form-item>
-                <a-form-item label="客户名称：">
+                <a-form-item label="客户名称：" class="bottom">
                   <a-input v-model:value="editableData.orderCustom" />
                 </a-form-item>
-                <a-form-item label="联系人：">
+                <a-form-item label="联系人：" class="bottom">
                   <a-input v-model:value="editableData.orderContacts" />
                 </a-form-item>
-                <a-form-item label="联系电话：">
+                <a-form-item label="联系电话：" class="bottom">
                   <a-input v-model:value="editableData.orderTel" />
                 </a-form-item>
 
-                <a-form-item label="工单状态：">
+                <a-form-item label="工单状态：" class="bottom">
                   <a-radio-group
                     name="radioGroup"
                     v-model:value="editableData.orderStaus"
@@ -255,11 +279,11 @@
                   </a-radio-group>
                 </a-form-item>
 
-                <a-form-item label="工单来源：">
+                <a-form-item label="工单来源：" class="bottom">
                   <a-input v-model:value="editableData.orderOrigin" />
                 </a-form-item>
 
-                <a-form-item label="备注：">
+                <a-form-item label="备注：" class="bottom">
                   <a-input v-model:value="editableData.orderRemark" />
                 </a-form-item>
               </a-form>
@@ -442,14 +466,14 @@ const columns = [
   },
 ];
 
-interface DataItem {
-  fairName: string;
-  sponsorInfo: string;
-  prepareTime: Moment;
-  startTime: Moment;
-  endTime: Moment;
-  location: string;
-}
+// interface DataItem {
+//   fairName: string;
+//   sponsorInfo: string;
+//   prepareTime: Moment;
+//   startTime: Moment;
+//   endTime: Moment;
+//   location: string;
+// }
 
 // const data: DataItem[] = [];
 
@@ -519,6 +543,7 @@ interface FormOrder {
   fairId: number;
   orderLocation: string;
   orderSvcItem: string;
+  orderUnitPrice: number;
   orderNum: number;
   orderCharge: number;
   orderCustom: string;
@@ -538,32 +563,32 @@ export default defineComponent({
     const value2 = ref<string>("");
 
     // 展会复选框逻辑处理
-    const rowSelection = {
-      onChange: (
-        selectedRowKeys: (string | number)[],
-        selectedRows: DataItem[]
-      ) => {
-        console.log(
-          `selectedRowKeys: ${selectedRowKeys}`,
-          "selectedRows: ",
-          selectedRows
-        );
-      },
-      onSelect: (
-        record: DataItem,
-        selected: boolean,
-        selectedRows: DataItem[]
-      ) => {
-        console.log(record, selected, selectedRows);
-      },
-      onSelectAll: (
-        selected: boolean,
-        selectedRows: DataItem[],
-        changeRows: DataItem[]
-      ) => {
-        console.log(selected, selectedRows, changeRows);
-      },
-    };
+    // const rowSelection = {
+    //   onChange: (
+    //     selectedRowKeys: (string | number)[],
+    //     selectedRows: DataItem[]
+    //   ) => {
+    //     console.log(
+    //       `selectedRowKeys: ${selectedRowKeys}`,
+    //       "selectedRows: ",
+    //       selectedRows
+    //     );
+    //   },
+    //   onSelect: (
+    //     record: DataItem,
+    //     selected: boolean,
+    //     selectedRows: DataItem[]
+    //   ) => {
+    //     console.log(record, selected, selectedRows);
+    //   },
+    //   onSelectAll: (
+    //     selected: boolean,
+    //     selectedRows: DataItem[],
+    //     changeRows: DataItem[]
+    //   ) => {
+    //     console.log(selected, selectedRows, changeRows);
+    //   },
+    // };
 
     //工单对应展会列表数据
     // 页面挂载后读取展会列表
@@ -666,7 +691,8 @@ export default defineComponent({
       // console.log(toRaw(serviceData));
       for (let i = 0; i < serviceData.length; i++) {
         if (serviceData[i]["serviceName"] == value) {
-          form.orderCharge = serviceData[i]["price"] * form.orderNum;
+          form.orderUnitPrice = serviceData[i]["price"];
+          form.orderCharge = form.orderUnitPrice * form.orderNum;
           break;
         }
       }
@@ -675,12 +701,7 @@ export default defineComponent({
     };
 
     const onChangeNum = () => {
-      for (let j = 0; j < serviceData.length; j++) {
-        if (serviceData[j]["serviceName"] == form.orderSvcItem) {
-          form.orderCharge = serviceData[j]["price"] * form.orderNum;
-          break;
-        }
-      }
+      form.orderCharge = form.orderUnitPrice * form.orderNum;
     };
 
     //定义表单对象初始值
@@ -688,6 +709,7 @@ export default defineComponent({
       fairId: 0,
       orderLocation: "",
       orderSvcItem: "",
+      orderUnitPrice: 0,
       orderNum: 1,
       orderCharge: 0,
       orderCustom: "",
@@ -753,6 +775,7 @@ export default defineComponent({
     const editableData = reactive({
       orderLocation: "",
       orderSvcItem: "",
+      orderUnitPrice: 0,
       orderNum: 1,
       orderCharge: 0,
       orderCustom: "",
@@ -786,21 +809,22 @@ export default defineComponent({
     const handleEditChangeService = (value: string) => {
       for (let i = 0; i < serviceData.length; i++) {
         if (serviceData[i]["serviceName"] == value) {
+          editableData.orderUnitPrice = serviceData[i]["price"];
           editableData.orderCharge =
-            serviceData[i]["price"] * editableData.orderNum;
+            editableData.orderUnitPrice * editableData.orderNum;
           break;
         }
       }
     };
 
+    const changeEditUnitPrice = () => {
+      editableData.orderCharge =
+        editableData.orderUnitPrice * editableData.orderNum;
+    };
+
     const onEditChangeNum = () => {
-      for (let j = 0; j < serviceData.length; j++) {
-        if (serviceData[j]["serviceName"] == editableData.orderSvcItem) {
-          editableData.orderCharge =
-            serviceData[j]["price"] * editableData.orderNum;
-          break;
-        }
-      }
+      editableData.orderCharge =
+        editableData.orderUnitPrice * editableData.orderNum;
     };
 
     const handleEditDrawerClose = () => {
@@ -886,9 +910,141 @@ export default defineComponent({
       assignDrawerVisible.value = false;
     };
 
+    var title = [
+      "安装位置",
+      "客户名称",
+      "联系方式",
+      "电话",
+      "服务内容",
+      "数量",
+      "单价",
+      "小计",
+    ];
+
+    const handleExpToExcel = (record) => {
+      //判断当前行是否展开
+      if (record.id != expandedRowKeys.value[0]) {
+        message.info("请先点击+展开列表！");
+      } else {
+        // 筛选导出的数据
+
+        let excelData = <any>[];
+
+        for (let i = 0; i < orderData.value.length; i++) {
+          excelData.push({
+            orderLocation: orderData.value[i]["orderLocation"],
+            orderCustom: orderData.value[i]["orderCustom"],
+            orderContacts: orderData.value[i]["orderContacts"],
+            orderTel: orderData.value[i]["orderTel"],
+            orderSvcItem: orderData.value[i]["orderSvcItem"],
+            orderNum: orderData.value[i]["orderNum"],
+            orderUnitPrice: orderData.value[i]["orderUnitPrice"],
+            orderCharge: orderData.value[i]["orderCharge"],
+          });
+        }
+
+        // console.log(excelData);
+
+        JSONToExcelConvertor(excelData, "导出工单", title, "");
+        excelData.length = 0;
+      }
+    };
+
+    function JSONToExcelConvertor(JSONData, FileName, title, filter) {
+      if (!JSONData) return;
+      //转化json为object
+      var arrData =
+        typeof JSONData != "object" ? JSON.parse(JSONData) : JSONData;
+
+      var excel = "<table>";
+
+      //设置表头
+      var row = "<tr>";
+
+      if (title) {
+        //使用标题项
+        for (var i in title) {
+          row += "<th align='center'>" + title[i] + "</th>";
+        }
+      } else {
+        //不使用标题项
+        for (var i in arrData[0]) {
+          row += "<th align='center'>" + i + "</th>";
+        }
+      }
+
+      excel += row + "</tr>";
+
+      //设置数据
+      for (let i = 0; i < arrData.length; i++) {
+        var row = "<tr>";
+
+        for (var index in arrData[i]) {
+          //判断是否有过滤行
+          if (filter) {
+            if (filter.indexOf(index) == -1) {
+              var value = arrData[i][index] == null ? "" : arrData[i][index];
+              row += "<td>" + value + "</td>";
+            }
+          } else {
+            var value = arrData[i][index] == null ? "" : arrData[i][index];
+            row += "<td align='center'>" + value + "</td>";
+          }
+        }
+
+        excel += row + "</tr>";
+      }
+
+      excel += "</table>";
+
+      var excelFile =
+        "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:x='urn:schemas-microsoft-com:office:excel' xmlns='http://www.w3.org/TR/REC-html40'>";
+      excelFile +=
+        '<meta http-equiv="content-type" content="application/vnd.ms-excel; charset=UTF-8">';
+      excelFile +=
+        '<meta http-equiv="content-type" content="application/vnd.ms-excel';
+      excelFile += '; charset=UTF-8">';
+      excelFile += "<head>";
+      excelFile += "<!--[if gte mso 9]>";
+      excelFile += "<xml>";
+      excelFile += "<x:ExcelWorkbook>";
+      excelFile += "<x:ExcelWorksheets>";
+      excelFile += "<x:ExcelWorksheet>";
+      excelFile += "<x:Name>";
+      excelFile += "{worksheet}";
+      excelFile += "</x:Name>";
+      excelFile += "<x:WorksheetOptions>";
+      excelFile += "<x:DisplayGridlines/>";
+      excelFile += "</x:WorksheetOptions>";
+      excelFile += "</x:ExcelWorksheet>";
+      excelFile += "</x:ExcelWorksheets>";
+      excelFile += "</x:ExcelWorkbook>";
+      excelFile += "</xml>";
+      excelFile += "<![endif]-->";
+      excelFile += "</head>";
+      excelFile += "<body>";
+      excelFile += excel;
+      excelFile += "</body>";
+      excelFile += "</html>";
+
+      var uri =
+        "data:application/vnd.ms-excel;charset=utf-8," +
+        encodeURIComponent(excelFile);
+
+      var link = document.createElement("a");
+      link.href = uri;
+
+      link.style = "visibility:hidden";
+      link.download = FileName + ".xls";
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
     return {
       reload,
-      rowSelection,
+      // rowSelection,
       fairData,
       columns,
       innerColumns,
@@ -911,6 +1067,7 @@ export default defineComponent({
       handleChangeService,
       onChangeNum,
       handleEditChangeService,
+      changeEditUnitPrice,
       onEditChangeNum,
 
       editDrawerVisible,
@@ -918,6 +1075,7 @@ export default defineComponent({
       handleEditDrawerClose,
       handlePutOrder,
       fairCopiedId,
+      handleExpToExcel,
 
       handleAssign,
       assignDrawerVisible,
@@ -950,5 +1108,8 @@ export default defineComponent({
   },
 });
 </script>
-<style>
+<style scoped>
+.bottom {
+  margin-bottom: 5px;
+}
 </style>
