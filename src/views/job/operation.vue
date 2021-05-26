@@ -18,10 +18,9 @@
         :rowKey="(record) => record.id"
         size="small"
       >
-        <template #orderTag>
+        <template #orderTag="{ text }">
           <span>
-            <a-tag color="pink">Job</a-tag>
-            <a-tag color="green">SMS</a-tag>
+            <a-tag color="pink" v-if="text" v-bind:title="text">SMS</a-tag>
           </span>
         </template>
 
@@ -48,37 +47,37 @@
                 :label-col="labelCol"
                 :wrapper-col="wrapperCol"
               >
-                <a-form-item label="展会名称：">
+                <a-form-item label="展会名称：" class="bottom">
                   {{ fairCopiedName }}
                 </a-form-item>
 
-                <a-form-item label="安装地点：">
+                <a-form-item label="安装地点：" class="bottom">
                   {{ editableData.orderLocation }}
                 </a-form-item>
-                <a-form-item label="服务项目：">
+                <a-form-item label="服务项目：" class="bottom">
                   {{ editableData.orderSvcItem }}
                 </a-form-item>
-                <a-form-item label="联系电话：">
+                <a-form-item label="联系电话：" class="bottom">
                   {{ editableData.orderTel }}
                 </a-form-item>
 
-                <a-form-item label="备注：">
+                <a-form-item label="备注：" class="bottom">
                   {{ editableData.orderRemark }}
                 </a-form-item>
                 <!-- <a-form-item label="联系人：">
                   {{ editableData.orderContacts }}
                 </a-form-item> -->
 
-                <a-form-item label="宽带账号密码：">
+                <a-form-item label="宽带账号密码：" class="bottom">
                   <a-input v-model:value="editableData.orderAccout" />
                 </a-form-item>
-                <a-form-item label="专线配置信息：">
+                <a-form-item label="专线配置信息：" class="bottom">
                   <a-textarea
                     v-model:value="editableData.orderConfig"
                     :rows="2"
                   />
                 </a-form-item>
-                <a-form-item label="格式(中间空格)：">
+                <a-form-item label="格式(中间空格)：" class="bottom">
                   用户IP(/掩码) 用户IP网关 交换机IP 交换机端口 VLAN 上行速率
                   下行速率 备注
                 </a-form-item>
@@ -173,7 +172,7 @@
               title="确定发送短信吗?"
               ok-text="是"
               cancel-text="否"
-              @confirm="handleSMS(record.id)"
+              @confirm="handleSMS(record)"
             >
               <a
                 ><a-tooltip title="短信" :color="'blue'"
@@ -200,6 +199,8 @@ import moment from "moment";
 import { message } from "ant-design-vue";
 import { getFairList } from "../../network/fairApi";
 import { getOrderList, putOrder } from "../../network/orderApi";
+import axios from "axios"; //用于发送短信
+moment.locale("zh-cn");
 
 const columns = [
   {
@@ -266,14 +267,14 @@ const innerColumns = [
     title: "作业标识",
     dataIndex: "orderTag",
     key: "orderTag",
-    width: 120,
+    width: 80,
     slots: { customRender: "orderTag" },
   },
   {
     title: "备注",
     dataIndex: "orderRemark",
     key: "orderRemark",
-    width: 80,
+    width: 120,
     ellipsis: true,
   },
   {
@@ -330,9 +331,68 @@ export default defineComponent({
       }
     };
 
-    const handleSMS = (e: MouseEvent) => {
-      message.success("发送成功！");
-      console.log(e);
+    const handleSMS = (record: any) => {
+      if (record.orderTel.length != 11) {
+        message.warning("手机号码不正确！");
+      } else {
+        if (record.orderAccout) {
+          var accout = "宽带账号/密码(" + record.orderAccout + ")，";
+        } else accout = "";
+        if (record.orderConfig) {
+          var str = record.orderConfig.trim().split(" ");
+          var config =
+            "专线配置(IP/掩码" +
+            str[0] +
+            ",网关" +
+            str[1] +
+            ",DNS 120.80.88.88/221.5.88.88" +
+            ")，";
+        } else config = "";
+        const content =
+          "尊敬的参展商，您申请的" +
+          accout +
+          config +
+          "使用过程中有任何问题请联系现场林工15975118389或客服邹小姐13418001279";
+        // console.log(content);
+        axios({
+          method: "GET",
+          url: "smsApi/Service.asmx/SendMessages", //在vite.config.ts中进行代理
+          params: {
+            uid: "zouq8610",
+            pwd: "wingswind2015",
+            tos: record.orderTel,
+            msg: content,
+            otime: "",
+          },
+        }).then((res) => {
+          // console.log(e);
+          if (res.status == 200) {
+            message.success("发送成功！");
+
+            // const tag = {
+            //   id: record.id,
+            //   orderTag: moment().format("LLLL"),
+            // };
+            //更新短信发送时间戳
+            record.orderTag = moment().format("YYYY年MM月DD日 HH:mm:ss");
+            putOrder(record).then((res) => {
+              if (res.status == 200) {
+                // 刷新展开行工单数据
+                const params = {
+                  fairId: expandedRowKeys.value[0],
+                };
+                getOrderList(params)
+                  .then((res) => {
+                    orderData.value = res.data;
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  });
+              }
+            });
+          }
+        });
+      }
     };
 
     // 作业资料编辑
@@ -445,5 +505,8 @@ export default defineComponent({
   },
 });
 </script>
-<style>
+<style scoped>
+.bottom {
+  margin-bottom: 5px;
+}
 </style>

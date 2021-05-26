@@ -14,31 +14,31 @@
       >
         <!--  -->
         <a-form ref="formRef" :label-col="labelCol" :wrapper-col="wrapperCol">
-          <a-form-item label="服务器名称：">
+          <a-form-item label="服务器名称：" class="bottom">
             <div v-if="editable">
               <a-input v-model:value="editableData.srvName" />
             </div>
             <div v-else>{{ svrData.srvName || "" }}</div>
           </a-form-item>
-          <a-form-item label="IP地址：">
+          <a-form-item label="IP地址：" class="bottom">
             <div v-if="editable">
               <a-input v-model:value="editableData.srvIp" />
             </div>
             <div v-else>{{ svrData.srvIp || "" }}</div>
           </a-form-item>
-          <a-form-item label="端口号：">
+          <a-form-item label="端口号：" class="bottom">
             <div v-if="editable">
               <a-input v-model:value="editableData.srvPort" />
             </div>
             <div v-else>{{ svrData.srvPort || "" }}</div>
           </a-form-item>
-          <a-form-item label="登录账号：">
+          <a-form-item label="登录账号：" class="bottom">
             <div v-if="editable">
               <a-input v-model:value="editableData.srvAcct" />
             </div>
             <div v-else>{{ svrData.srvAcct || "" }}</div>
           </a-form-item>
-          <a-form-item label="登录密码：">
+          <a-form-item label="登录密码：" class="bottom">
             <div v-if="editable">
               <a-input-password v-model:value="editableData.srvPwd" />
             </div>
@@ -162,5 +162,9 @@ export default defineComponent({
   margin: 0px;
   padding: 0px;
   margin-bottom: 10px;
+}
+
+.bottom {
+  margin-bottom: 5px;
 }
 </style>

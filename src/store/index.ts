@@ -1,9 +1,10 @@
 import { createStore } from "vuex";
-import { getJobSvr } from "../network/setup";
+import { getJobSvr, getSmsGw } from "../network/setup";
 
 export default createStore({
   state: {
     jobSvrData: {},
+    smsGwData: {},
   },
 
   actions: {
@@ -13,13 +14,24 @@ export default createStore({
         svrId: 1,
       };
 
-      // getJobSvr(params).then((res) => {
-      //   commit("SET_SvrData", res.data);
-      // });
-
       return new Promise((resolve, reject) => {
         getJobSvr(params).then((res) => {
           commit("SET_SvrData", res.data); //将数据存入VUEX
+          resolve(res.data);
+          console.log(reject);
+        });
+      });
+    },
+
+    //获取短信网关器配置
+    getSmsData({ commit }) {
+      const params = {
+        smsgwId: 1,
+      };
+
+      return new Promise((resolve, reject) => {
+        getSmsGw(params).then((res) => {
+          commit("SET_smsData", res.data); //将数据存入VUEX
           resolve(res.data);
           console.log(reject);
         });
@@ -30,6 +42,9 @@ export default createStore({
   mutations: {
     SET_SvrData(state, jobSvrData) {
       state.jobSvrData = jobSvrData;
+    },
+    SET_smsData(state, smsGwData) {
+      state.smsGwData = smsGwData;
     },
   },
   modules: {},

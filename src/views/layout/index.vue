@@ -153,6 +153,7 @@ export default defineComponent({
     const store = useStore();
     onMounted(() => {
       store.dispatch("getSvrData"); //页面加载后使用vuex管理作业服务器相关配置
+      store.dispatch("getSmsData");
     });
 
     return {
