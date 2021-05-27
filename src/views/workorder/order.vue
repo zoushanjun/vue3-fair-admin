@@ -88,9 +88,9 @@
             >
               <a-select-option
                 v-for="item in serviceData"
-                :key="item.serviceName"
+                :key="item['serviceName']"
               >
-                {{ item.serviceName }}
+                {{ item["serviceName"] }}
               </a-select-option>
             </a-select>
           </a-form-item>
@@ -228,9 +228,9 @@
                   >
                     <a-select-option
                       v-for="item in serviceData"
-                      :key="item.serviceName"
+                      :key="item['serviceName']"
                     >
-                      {{ item.serviceName }}
+                      {{ item["serviceName"] }}
                     </a-select-option>
                   </a-select>
                 </a-form-item>
@@ -403,7 +403,7 @@ import {
   watch,
   onMounted,
 } from "vue";
-import moment, { Moment } from "moment";
+import moment from "moment";
 import { getFairList, getServiceList } from "../../network/fairApi";
 
 import {
@@ -1034,7 +1034,7 @@ export default defineComponent({
       var link = document.createElement("a");
       link.href = uri;
 
-      link.style = "visibility:hidden";
+      // link.style = "visibility:hidden";
       link.download = FileName + ".xls";
 
       document.body.appendChild(link);

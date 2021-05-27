@@ -47,7 +47,7 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, onMounted, ref, toRaw } from "vue";
+import { defineComponent, onMounted, ref } from "vue";
 import { getFairList } from "../../network/fairApi";
 const data: string[] = [
   "[5.13-5.19]【FLOWEXPO】2021年第23届广州国际流体展",

@@ -29,21 +29,21 @@ export default defineConfig({
     open: false, // 是否自动在浏览器打开
     port: 3000, // 端口号
     host: "0.0.0.0",
-    proxy: {
-      "/remoney": {
-        target: "http://service.winic.org:8009", // 短信余额后台接口
-        changeOrigin: true,
-        secure: false, // 如果是https接口，需要配置这个参数
-        // ws: true, //websocket支持
-        rewrite: (path) => path.replace(/^\/remoney/, ""),
-      },
-      "/smsApi": {
-        target: "http://service2.winic.org", // 短信发送后台接口
-        changeOrigin: true,
-        secure: false, // 如果是https接口，需要配置这个参数
-        // ws: true, //websocket支持
-        rewrite: (path) => path.replace(/^\/smsApi/, ""),
-      },
-    },
+    // proxy: {
+    //   "/remoney": {
+    //     target: "http://service.winic.org:8009", // 短信余额后台接口
+    //     changeOrigin: true,
+    //     secure: false, // 如果是https接口，需要配置这个参数
+    //     // ws: true, //websocket支持
+    //     rewrite: (path) => path.replace(/^\/remoney/, ""),
+    //   },
+    //   "/smsApi": {
+    //     target: "http://service2.winic.org", // 短信发送后台接口
+    //     changeOrigin: true,
+    //     secure: false, // 如果是https接口，需要配置这个参数
+    //     // ws: true, //websocket支持
+    //     rewrite: (path) => path.replace(/^\/smsApi/, ""),
+    //   },
+    // },
   },
 });

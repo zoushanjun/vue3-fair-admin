@@ -89,9 +89,9 @@
       >
     </div>
     <div v-else>
-      <a-button shape="round" @click="edit"
+      <!-- <a-button shape="round" @click="edit"
         ><template #icon><EditOutlined /></template>编辑</a-button
-      >
+      > -->
     </div>
   </div>
 </template>
@@ -105,7 +105,8 @@ import {
   CloseOutlined,
   EditOutlined,
 } from "@ant-design/icons-vue";
-import axios from "axios";
+// import axios from "axios";
+import { getSmsRemoney } from "../../network/smsApi";
 
 export default defineComponent({
   name: "smsgw",
@@ -157,15 +158,18 @@ export default defineComponent({
 
     const balance = ref<string>();
     const updateBalance = () => {
-      axios({
-        method: "GET",
-        url: "remoney/webservice/public/remoney.asp",
-        params: {
-          uid: "zouq8610",
-          pwd: "wingswind2015",
-        },
-      }).then((res) => {
-        console.log("数据：", res.data);
+      // axios({
+      //   method: "GET",
+      //   url: "remoney/webservice/public/remoney.asp",
+      //   params: {
+      //     uid: "zouq8610",
+      //     pwd: "wingswind2015",
+      //   },
+      // }).then((res) => {
+      //   console.log("数据：", res.data);
+      //   balance.value = res.data;
+      // });
+      getSmsRemoney().then((res) => {
         balance.value = res.data;
       });
     };

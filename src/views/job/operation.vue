@@ -199,7 +199,8 @@ import moment from "moment";
 import { message } from "ant-design-vue";
 import { getFairList } from "../../network/fairApi";
 import { getOrderList, putOrder } from "../../network/orderApi";
-import axios from "axios"; //用于发送短信
+import { getSmsSendMessage } from "../../network/smsApi"; //用于发送短信
+// import axios from "axios";
 moment.locale("zh-cn");
 
 const columns = [
@@ -354,25 +355,13 @@ export default defineComponent({
           config +
           "使用过程中有任何问题请联系现场林工15975118389或客服邹小姐13418001279";
         // console.log(content);
-        axios({
-          method: "GET",
-          url: "smsApi/Service.asmx/SendMessages", //在vite.config.ts中进行代理
-          params: {
-            uid: "zouq8610",
-            pwd: "wingswind2015",
-            tos: record.orderTel,
-            msg: content,
-            otime: "",
-          },
-        }).then((res) => {
-          // console.log(e);
+        const params = {
+          tos: record.orderTel,
+          msg: content,
+        };
+        getSmsSendMessage(params).then((res) => {
           if (res.status == 200) {
             message.success("发送成功！");
-
-            // const tag = {
-            //   id: record.id,
-            //   orderTag: moment().format("LLLL"),
-            // };
             //更新短信发送时间戳
             record.orderTag = moment().format("YYYY年MM月DD日 HH:mm:ss");
             putOrder(record).then((res) => {
@@ -393,6 +382,40 @@ export default defineComponent({
           }
         });
       }
+      // axios({
+      //   method: "GET",
+      //   url: "smsApi/Service.asmx/SendMessages", //在vite.config.ts中进行代理
+      //   params: {
+      //     uid: "zouq8610",
+      //     pwd: "wingswind2015",
+      //     tos: record.orderTel,
+      //     msg: content,
+      //     otime: "",
+      //   },
+      // }).then((res) => {
+      //   // console.log(e);
+      //   if (res.status == 200) {
+      //     message.success("发送成功！");
+      //     //更新短信发送时间戳
+      //     record.orderTag = moment().format("YYYY年MM月DD日 HH:mm:ss");
+      //     putOrder(record).then((res) => {
+      //       if (res.status == 200) {
+      //         // 刷新展开行工单数据
+      //         const params = {
+      //           fairId: expandedRowKeys.value[0],
+      //         };
+      //         getOrderList(params)
+      //           .then((res) => {
+      //             orderData.value = res.data;
+      //           })
+      //           .catch((err) => {
+      //             console.log(err);
+      //           });
+      //       }
+      //     });
+      //   }
+      // });
+      // }
     };
 
     // 作业资料编辑
