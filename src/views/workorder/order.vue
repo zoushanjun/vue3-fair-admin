@@ -134,9 +134,10 @@
               v-model:value="form.orderStaus"
               size="small"
             >
-              <a-radio value="未指派">未指派</a-radio>
-              <a-radio value="已指派">已指派</a-radio>
-              <a-radio value="已施工">已施工</a-radio>
+              <a-radio value="待派单">待派单</a-radio>
+              <a-radio value="待接单">待接单</a-radio>
+              <a-radio value="待施工">待施工</a-radio>
+              <a-radio value="待回收">待回收</a-radio>
               <a-radio value="已回收">已回收</a-radio>
             </a-radio-group>
           </a-form-item>
@@ -272,9 +273,10 @@
                     v-model:value="editableData.orderStaus"
                     size="small"
                   >
-                    <a-radio value="未指派">未指派</a-radio>
-                    <a-radio value="已指派">已指派</a-radio>
-                    <a-radio value="已施工">已施工</a-radio>
+                    <a-radio value="待派单">待派单</a-radio>
+                    <a-radio value="待接单">待接单</a-radio>
+                    <a-radio value="待施工">待施工</a-radio>
+                    <a-radio value="待回收">待回收</a-radio>
                     <a-radio value="已回收">已回收</a-radio>
                   </a-radio-group>
                 </a-form-item>
@@ -333,7 +335,7 @@
               style="height: 10px; background-color: #7cb305"
             />
             <a href="#" @click.prevent="handleAssign(record)"
-              ><a-tooltip title="指派" :color="'blue'"
+              ><a-tooltip title="派单" :color="'blue'"
                 ><RightSquareTwoTone /></a-tooltip
             ></a>
             <a-drawer
@@ -715,7 +717,7 @@ export default defineComponent({
       orderCustom: "",
       orderContacts: "",
       orderTel: "",
-      orderStaus: "未指派",
+      orderStaus: "待派单",
       orderOrigin: "展务通",
       orderRemark: "",
     });
@@ -760,7 +762,7 @@ export default defineComponent({
       form.orderCustom = "";
       form.orderContacts = "";
       form.orderTel = "";
-      form.orderStaus = "未指派";
+      form.orderStaus = "待派单";
       form.orderOrigin = "展务通";
       form.orderRemark = "";
     };
@@ -781,7 +783,7 @@ export default defineComponent({
       orderCustom: "",
       orderContacts: "",
       orderTel: "",
-      orderStaus: "未指派",
+      orderStaus: "待派单",
       orderOrigin: "展务通",
       orderRemark: "",
     });
@@ -873,7 +875,7 @@ export default defineComponent({
       });
     };
 
-    //指派
+    //派单
     const assignDrawerVisible = ref<boolean>(false);
     const plainOptions = ["林细彬", "曾烈春", "王建业"];
 

@@ -19,29 +19,34 @@
       <div style="color: #00f; margin-left: 10px; margin-top: 10px">
         总体运行概况：
       </div>
-      <img
+      <!-- <img
         style="margin-left: 10px; margin-top: 10px"
         src="../../assets/summary.png"
         height="144"
         width="534"
-      />
+      /> -->
+      {{healthData.healthyNetworkDevicePercentage}}
+
     </div>
     <div class="item">
       <div style="color: #00f; margin-left: 10px; margin-top: 10px">
         网络设备：
       </div>
       <img src="../../assets/network.png" height="218" width="556" />
+       {{healthData.networkHealthAverage}}
     </div>
+
 
     <div class="item">
       <div style="color: #00f; margin-left: 10px; margin-top: 10px">
         无线客户端：
       </div>
+      {{healthData.networkHealthWireless}}
       <img
         style="margin-left: 10px; margin-top: 10px"
         src="../../assets/wireless.png"
         height="123"
-        width="525"
+        width="525"        
       />
     </div>
   </div>
@@ -49,6 +54,8 @@
 <script lang="ts">
 import { defineComponent, onMounted, ref } from "vue";
 import { getFairList } from "../../network/fairApi";
+import {reqest} from "../../network/requestcisco";
+import { request } from "/@/network/request";
 const data: string[] = [
   "[5.13-5.19]【FLOWEXPO】2021年第23届广州国际流体展",
   "[5.13-5.19]2021广州国际专业灯光、音响展览会",
@@ -71,10 +78,19 @@ export default defineComponent({
         });
       console.log(listData);
     });
+    
+    const healthData=ref(any);
+    const healthdata=()=>{
+      request('/v1/site-health').then((res)=>{
+       healthData.value=res.data
 
+      })
+    }
     return {
       data,
       listData,
+      healthdata,
+      healthData,
     };
   },
 });
