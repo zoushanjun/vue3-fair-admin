@@ -67,7 +67,7 @@
           :rules="rules"
         >
           <a-form-item label="展会名称：" class="bottom">
-            {{ fairCopiedName }}
+            {{ fairCopiedName }} 
           </a-form-item>
           <a-form-item v-if="false">
             <a-input v-model:value="fairCopiedId" />
@@ -204,7 +204,7 @@
                 background: '#778899',
                 animation: 'none',
               }"
-              @ok="drawerVisible = false"
+              @ok="editDrawerVisible = false"
             >
               <a-form
                 ref="formRef"
@@ -348,7 +348,7 @@
                 background: '#778899',
                 animation: 'none',
               }"
-              @ok="drawerVisible = false"
+              @ok="assignDrawerVisible = false"
             >
               <div :style="{ borderBottom: '1px solid #E9E9E9' }">
                 <a-checkbox
@@ -548,6 +548,8 @@ interface FormOrder {
   orderUnitPrice: number;
   orderNum: number;
   orderCharge: number;
+  orderUnitCommision: number;
+  orderSubCommision: number;
   orderCustom: string;
   orderContacts: string;
   orderTel: string;
@@ -695,6 +697,8 @@ export default defineComponent({
         if (serviceData[i]["serviceName"] == value) {
           form.orderUnitPrice = serviceData[i]["price"];
           form.orderCharge = form.orderUnitPrice * form.orderNum;
+          form.orderUnitCommision = serviceData[i]["commision"];
+          form.orderSubCommision = form.orderUnitCommision * form.orderNum;
           break;
         }
       }
@@ -704,6 +708,7 @@ export default defineComponent({
 
     const onChangeNum = () => {
       form.orderCharge = form.orderUnitPrice * form.orderNum;
+      form.orderSubCommision = form.orderUnitCommision * form.orderNum;
     };
 
     //定义表单对象初始值
@@ -714,6 +719,8 @@ export default defineComponent({
       orderUnitPrice: 0,
       orderNum: 1,
       orderCharge: 0,
+      orderUnitCommision: 0,
+      orderSubCommision: 0,
       orderCustom: "",
       orderContacts: "",
       orderTel: "",
@@ -759,6 +766,8 @@ export default defineComponent({
       form.orderSvcItem = "";
       form.orderNum = 1;
       form.orderCharge = 0;
+      form.orderUnitCommision = 0;
+      form.orderSubCommision = 0;
       form.orderCustom = "";
       form.orderContacts = "";
       form.orderTel = "";
@@ -780,6 +789,8 @@ export default defineComponent({
       orderUnitPrice: 0,
       orderNum: 1,
       orderCharge: 0,
+      orderUnitCommision: 0,
+      orderSubCommision: 0,
       orderCustom: "",
       orderContacts: "",
       orderTel: "",
@@ -814,6 +825,9 @@ export default defineComponent({
           editableData.orderUnitPrice = serviceData[i]["price"];
           editableData.orderCharge =
             editableData.orderUnitPrice * editableData.orderNum;
+          editableData.orderUnitCommision = serviceData[i]["commision"];
+          editableData.orderSubCommision =
+            editableData.orderUnitCommision * editableData.orderNum;
           break;
         }
       }
@@ -827,6 +841,8 @@ export default defineComponent({
     const onEditChangeNum = () => {
       editableData.orderCharge =
         editableData.orderUnitPrice * editableData.orderNum;
+      editableData.orderSubCommision =
+        editableData.orderUnitCommision * editableData.orderNum;
     };
 
     const handleEditDrawerClose = () => {
@@ -912,6 +928,7 @@ export default defineComponent({
       assignDrawerVisible.value = false;
     };
 
+    // 设置导出excel表头
     var title = [
       "安装位置",
       "客户名称",

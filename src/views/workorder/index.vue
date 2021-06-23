@@ -5,9 +5,11 @@
         <order></order>
       </a-tab-pane>
 
-      <a-tab-pane key="2" tab="收入统计"> </a-tab-pane>
+      <a-tab-pane key="2" tab="绩效统计">
+        <commision></commision>
+      </a-tab-pane>
 
-      <a-tab-pane key="3" tab="绩效统计"> </a-tab-pane>
+      <!-- <a-tab-pane key="3" tab="收入统计"> </a-tab-pane> -->
     </a-tabs>
   </div>
 </template>
@@ -16,6 +18,7 @@
 import { defineComponent, ref } from "vue";
 
 import order from "./order.vue";
+import commision from "./commision.vue";
 
 export default defineComponent({
   name: "orderIndex",
@@ -27,6 +30,7 @@ export default defineComponent({
 
   components: {
     order,
+    commision,
   },
 });
 </script>

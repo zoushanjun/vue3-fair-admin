@@ -4,8 +4,8 @@ import axios from "axios";
 export function request(config) {
   const instance = axios.create({
     // 在请求地址前面加上baseURL
-    // baseURL: "https://localhost:5000",
-    baseURL: "http://192.168.64.92:5000",
+    baseURL: "http://localhost:5000",
+    // baseURL: "http://192.168.64.92:5000",
     timeout: 5000,
   });
 
