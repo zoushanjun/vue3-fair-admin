@@ -1,16 +1,20 @@
 <template>
   <div class="card-container">
     <a-tabs v-model:activeKey="activeKey" type="card">
-      <a-tab-pane key="1" tab="人员管理">
-        <!-- <order></order> -->
+      <a-tab-pane key="1" tab="账号管理">
+        <person></person>
       </a-tab-pane>
 
-      <a-tab-pane key="2" tab="角色管理"> </a-tab-pane>
+      <a-tab-pane key="2" tab="角色列表">
+        <role></role>
+      </a-tab-pane>
     </a-tabs>
   </div>
 </template>
 <script lang="ts">
 import { defineComponent, ref } from "vue";
+import role from "./role.vue";
+import person from "./person.vue";
 
 export default defineComponent({
   name: "permissionIndex",
@@ -20,7 +24,10 @@ export default defineComponent({
     };
   },
 
-  components: {},
+  components: {
+    role,
+    person,
+  },
 });
 </script>
 <style lang="less">

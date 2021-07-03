@@ -2,34 +2,44 @@
   <div class="card-container">
     <a-tabs v-model:activeKey="activeKey" type="card">
       <!-- 1/资产类别操作模板部分 -->
-      <a-tab-pane key="1" tab="资产类别">
-        <category></category>
-      </a-tab-pane>
 
-      <a-tab-pane key="2" tab="资产管理">
+      <a-tab-pane key="1" tab="在线资产">
         <inventory></inventory>
       </a-tab-pane>
-      <a-tab-pane key="3" tab="操作日志"> 操作日志，功能开发中.....</a-tab-pane>
+      <a-tab-pane key="2" tab="资产型号">
+        <model></model>
+      </a-tab-pane>
+
+      <a-tab-pane key="3" tab="库存管理">
+        <stock></stock>
+      </a-tab-pane>
+      <a-tab-pane key="4" tab="库存日志">
+        <journal></journal>
+      </a-tab-pane>
     </a-tabs>
   </div>
 </template>
 <script lang="ts">
 import { defineComponent, ref } from "vue";
 import inventory from "./inventory.vue";
-import category from "./category.vue";
+import model from "./model.vue";
+import stock from "./stock.vue";
+import journal from "./journal.vue";
 
 export default defineComponent({
   name: "inventoryIndex",
   setup() {
     return {
-      activeKey: ref("2"),
+      activeKey: ref("1"),
       labelCol: { span: 4 },
       wrapperCol: { span: 14 },
     };
   },
   components: {
     inventory,
-    category,
+    model,
+    stock,
+    journal,
   },
 });
 </script>

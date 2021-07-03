@@ -5,12 +5,13 @@
         <img src="../../assets/logo.png" height="30" width="30" />展馆自动化系统
       </div>
       >
-      <!-- <a-menu theme="dark" mode="inline" v-model:selectedKeys="[this.$route.path]"> -->
-      <a-menu theme="dark" mode="inline" v-model:selectedKeys="selectedKeys">
+      <!-- 下面注释的行可以实现菜单高亮 -->
+      <!-- <a-menu theme="dark" mode="inline" v-model:selectedKeys="selectedKeys"> -->
+      <a-menu theme="dark" mode="inline" :selectedKeys="[$route.path]">
         <a-menu-item key="1">
           <router-link to="/dashboard">
             <DashboardOutlined />
-            <span>仪表盘</span>
+            <span v-show="collapsed">仪表盘</span>
           </router-link>
         </a-menu-item>
         <a-menu-item key="2">
@@ -49,12 +50,12 @@
             <span>权限</span>
           </router-link>
         </a-menu-item>
-        <a-menu-item key="8">
+        <!-- <a-menu-item key="8">
           <router-link to="/monitor">
             <RadarChartOutlined />
             <span>监控</span>
           </router-link>
-        </a-menu-item>
+        </a-menu-item> -->
       </a-menu>
     </a-layout-sider>
     <a-layout>
@@ -82,6 +83,7 @@
             </a-breadcrumb-item>
           </a-breadcrumb>
         </span>
+
         <span style="float: right; width: 100px; margin-right: 0">
           <a-space>
             <UserOutlined style="margin-rigt: 5px" />
@@ -106,6 +108,11 @@
               </template>
             </a-dropdown>
           </a-space>
+        </span>
+        <span style="float: right; width: 50px; margin-right: 0">
+          <a href="#" @click.prevent="refresh"
+            ><a-tooltip title="刷新" :color="'blue'"><RedoOutlined /></a-tooltip
+          ></a>
         </span>
       </a-layout-header>
       <a-layout-content>
@@ -132,8 +139,9 @@ import {
   PoweroffOutlined,
   UserOutlined,
   RadarChartOutlined,
+  RedoOutlined,
 } from "@ant-design/icons-vue";
-import { defineComponent, onMounted, ref } from "vue";
+import { defineComponent, onMounted, ref, inject } from "vue";
 import router from "../../router/index";
 import { useStore } from "vuex";
 export default defineComponent({
@@ -149,6 +157,7 @@ export default defineComponent({
       sessionStorage.removeItem("Login-user");
       router.push("/login");
     };
+    const refresh = inject("reload");
 
     const store = useStore();
     onMounted(() => {
@@ -157,12 +166,11 @@ export default defineComponent({
     });
 
     return {
-      // menuList,
       selectedKeys: ref<string[]>(["1"]),
-      // selectedKeys: this["$router"].path,
       collapsed: ref<boolean>(true),
       currentUser,
       logout,
+      refresh,
     };
   },
   components: {
@@ -182,6 +190,7 @@ export default defineComponent({
     PoweroffOutlined,
     UserOutlined,
     RadarChartOutlined,
+    RedoOutlined,
   },
 });
 </script>

@@ -24,6 +24,14 @@ export function putInvt(data) {
   });
 }
 
+export function delInventory(data) {
+  return request({
+    url: "/inventory",
+    method: "delete",
+    data,
+  });
+}
+
 export function getInvtCategoryList() {
   return request({
     url: "/inventory/category",
@@ -55,10 +63,48 @@ export function putInvtCategory(data) {
   });
 }
 
-export function delInventory(data) {
+export function getInvtModelList() {
   return request({
-    url: "/inventory",
+    url: "/inventory/model",
+    method: "get",
+  });
+}
+
+export function postInvtModel(data) {
+  return request({
+    url: "/inventory/model",
+    method: "post",
+    data,
+  });
+}
+
+export function deleteInvtModel(data) {
+  return request({
+    url: "/inventory/model",
     method: "delete",
+    data,
+  });
+}
+
+export function putInvtModel(data) {
+  return request({
+    url: "/inventory/model",
+    method: "put",
+    data,
+  });
+}
+
+export function getInvtJournal() {
+  return request({
+    url: "/inventory/journal",
+    method: "get",
+  });
+}
+
+export function postInvtJournal(data) {
+  return request({
+    url: "/inventory/journal",
+    method: "post",
     data,
   });
 }

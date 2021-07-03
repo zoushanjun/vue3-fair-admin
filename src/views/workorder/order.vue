@@ -27,7 +27,6 @@
     :expandedRowKeys="expandedRowKeys"
     @expand="onExpand"
     size="small"
-    class="components-table-demo-nested"
   >
     <template #operation="{ record }">
       <a @click="handleAdd(record)">
@@ -67,7 +66,7 @@
           :rules="rules"
         >
           <a-form-item label="展会名称：" class="bottom">
-            {{ fairCopiedName }} 
+            {{ fairCopiedName }}
           </a-form-item>
           <a-form-item v-if="false">
             <a-input v-model:value="fairCopiedId" />

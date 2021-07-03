@@ -1,21 +1,24 @@
 <template>
-  <!-- 1/资产类别操作模板部分 -->
+  <!-- 1/资产型号操作模板部分 -->
 
   <div>
-    <!-- 1.1/点击新增按钮，抽屉方式弹出新增类别表单 -->
+    <!-- 1.1/点击新增按钮，抽屉方式弹出新增型号表单 -->
     <a-button shape="round" @click="addDrawerVisible = true"
       ><template #icon><PlusOutlined /></template>新增</a-button
     >
     <a-drawer
-      title="新增类别"
+      title="新增型号"
       placement="right"
       :width="320"
       :closable="false"
       v-model:visible="addDrawerVisible"
     >
       <a-form ref="formRef" :model="form" :rules="rules" layout="vertical">
-        <a-form-item label="类别：" ref="category" name="category">
-          <a-input v-model:value="form.category" />
+        <a-form-item label="编号：" ref="sn" name="sn">
+          <a-input v-model:value="form.sn" />
+        </a-form-item>
+        <a-form-item label="型号：" ref="model" name="model">
+          <a-input v-model:value="form.model" />
         </a-form-item>
       </a-form>
       <div>
@@ -28,11 +31,11 @@
   </div>
   <a-divider />
 
-  <!-- 资产类别表格，size="small"指定为紧凑型 -->
+  <!-- 资产型号表格，size="small"指定为紧凑型 -->
 
   <a-table
     :columns="Columns"
-    :data-source="categoryListData"
+    :data-source="modelListData"
     :pagination="{ pageSize: 50 }"
     :scroll="{ y: 240 }"
     :rowKey="(record) => record.id"
@@ -46,7 +49,7 @@
         ></a>
         <a-drawer
           v-model:visible="editDrawerVisible"
-          title="修改类别"
+          title="修改型号"
           :width="600"
           :scroll="{ y: 240 }"
           :body-style="{ paddingBottom: '80px' }"
@@ -59,8 +62,11 @@
           @ok="editDrawerVisible = false"
         >
           <a-form :model="form" :label-col="labelCol" :wrapper-col="wrapperCol">
-            <a-form-item label="类别：">
-              <a-input v-model:value="editableData.category" />
+            <a-form-item label="编号：">
+              <a-input v-model:value="editableData.sn" />
+            </a-form-item>
+            <a-form-item label="型号：">
+              <a-input v-model:value="editableData.model" />
             </a-form-item>
           </a-form>
           <div
@@ -123,21 +129,29 @@ import { message } from "ant-design-vue";
 
 // 引入与flask后端交互的http api方法
 import {
-  getInvtCategoryList,
-  postInvtCategory,
-  deleteInvtCategory,
-  putInvtCategory,
+  getInvtModelList,
+  postInvtModel,
+  deleteInvtModel,
+  putInvtModel,
+  postInvtJournal,
 } from "../../network/inventoryApi";
 
-// 定义资产类别列表表头
+// 定义资产型号列表表头
 const Columns = [
   {
-    name: "category", //对应API返回的InvetCategoryListData中的字段
-    title: "类别",
-    dataIndex: "category",
-    key: "category",
+    name: "sn", //对应API返回的InvetModelListData中的字段
+    title: "编号",
+    dataIndex: "sn",
+    key: "sn",
     width: 200,
-    slots: { customRender: "category" },
+  },
+  {
+    name: "model", //对应API返回的InvetModelListData中的字段
+    title: "型号",
+    dataIndex: "model",
+    key: "model",
+    width: 200,
+    slots: { customRender: "model" },
   },
   {
     title: "操作",
@@ -149,25 +163,26 @@ const Columns = [
   },
 ];
 
-// 新增资产类别弹出框表单内容接口
-interface FormCategory {
+// 新增资产型号弹出框表单内容接口
+interface FormModel {
   // key: number;
-  category: string;
+  sn: number;
+  model: string;
 }
 
 export default defineComponent({
-  name: "category",
+  name: "model",
   setup() {
-    // 定义InvetCategoryListData资产类别数据为响应式数组
+    // 定义InvetModelListData资产型号数据为响应式数组
     // ref包裹的数据需要通过.value来获值
 
-    const categoryListData = ref([]);
+    const modelListData = ref([]);
 
-    // 页面挂载后读取资产列表、资产类别数据
+    // 页面挂载后读取资产列表、资产型号数据
     onMounted(() => {
-      getInvtCategoryList()
+      getInvtModelList()
         .then((res) => {
-          categoryListData.value = res.data;
+          modelListData.value = res.data;
         })
         .catch((err) => {
           console.log(err);
@@ -176,13 +191,14 @@ export default defineComponent({
 
     const value = ref<string>("");
 
-    // 资产类别页面相关处理
+    // 资产型号页面相关处理
     //ref需要加类型验证，不然在获取formRef.value时会有类型的错误提示
     const formRef = ref<any>(null);
-    // 定义资产类别“新增”按钮弹出对话框表单内容
-    const form: UnwrapRef<FormCategory> = reactive({
+    // 定义资产型号“新增”按钮弹出对话框表单内容
+    const form: UnwrapRef<FormModel> = reactive({
       // key: 0,
-      category: "",
+      sn: 100, //缺省分配编号
+      model: "",
     });
     const addDrawerVisible = ref<boolean>(false);
 
@@ -190,9 +206,9 @@ export default defineComponent({
       addDrawerVisible.value = false;
     };
     const rules = {
-      category: [
+      model: [
         { required: true, message: "请输入有效的字符", trigger: "blur" },
-        { min: 2, max: 20, message: "字符长度在2和20之间", trigger: "blur" },
+        { min: 2, max: 32, message: "字符长度在2和32之间", trigger: "blur" },
       ],
     };
 
@@ -202,35 +218,43 @@ export default defineComponent({
         .then(() => {
           // console.log('values', form, toRaw(form));
           const params = {
-            categoryName: form.category,
+            sn: form.sn,
+            model: form.model,
           };
-          postInvtCategory(params).then((res) => {
+          postInvtModel(params).then((res) => {
             if (res.status == 201) {
               message.success(res.data.message); // res.data.message是定义的弹出内容
               addDrawerVisible.value = false; //关闭抽屉
+              const data = {
+                msg:
+                  sessionStorage.getItem("Login-user") +
+                  "增加了型号:" +
+                  form.model,
+              };
+              postInvtJournal(data); //写入日志
               // 刷新当前页面
-              getInvtCategoryList()
+              getInvtModelList()
                 .then((res) => {
-                  categoryListData.value = res.data;
+                  modelListData.value = res.data;
                 })
                 .catch((err) => {
                   console.log(err);
                 });
             } else {
-              message.warning("类别已经存在");
+              message.warning("型号已经存在");
               return;
             }
           });
         })
-        .catch((error: ValidateErrorEntity<FormCategory>) => {
+        .catch((error: ValidateErrorEntity<FormModel>) => {
           console.log("error", error);
         });
     };
 
-    // 修改类别
+    // 修改型号
     const editDrawerVisible = ref<boolean>(false);
     const editable = ref<boolean>(false);
-    const editableData: UnwrapRef<Record<string, FormCategory>> = reactive({});
+    const editableData: UnwrapRef<Record<string, FormModel>> = reactive({});
     const handleEdit = (record: any) => {
       editDrawerVisible.value = true;
       for (const k in record) {
@@ -246,18 +270,26 @@ export default defineComponent({
     const handlePut = () => {
       const params = {
         id: editableData.id,
-        categoryName: editableData.category,
+        sn: editableData.sn,
+        model: editableData.model,
       };
       // console.log(params);
-      putInvtCategory(params)
+      putInvtModel(params)
         .then((res) => {
           if (res.status == 200) {
             message.success(res.data.message);
             editDrawerVisible.value = false; //关闭抽屉
+            const data = {
+              msg:
+                sessionStorage.getItem("Login-user") +
+                "更新了型号:" +
+                editableData.model,
+            };
+            postInvtJournal(data); //写入日志
             // 刷新当前页面
-            getInvtCategoryList()
+            getInvtModelList()
               .then((res) => {
-                categoryListData.value = res.data;
+                modelListData.value = res.data;
               })
               .catch((err) => {
                 console.log(err);
@@ -273,15 +305,19 @@ export default defineComponent({
       delete editableData[id];
     };
 
-    //删除类别,以json格式进行传递
+    //删除型号,以json格式进行传递
     const handelDel = (e: MouseEvent) => {
-      deleteInvtCategory({ id: e }).then((res) => {
+      deleteInvtModel({ id: e }).then((res) => {
         if (res.status == 200) {
           message.success("删除成功！");
+          const data = {
+            msg: sessionStorage.getItem("Login-user") + "删除了型号:内部ID" + e,
+          };
+          postInvtJournal(data); //写入日志
           // 刷新当前页面
-          getInvtCategoryList()
+          getInvtModelList()
             .then((res) => {
-              categoryListData.value = res.data;
+              modelListData.value = res.data;
             })
             .catch((err) => {
               console.log(err);
@@ -318,7 +354,7 @@ export default defineComponent({
       value,
 
       Columns,
-      categoryListData,
+      modelListData,
     };
   },
   components: {

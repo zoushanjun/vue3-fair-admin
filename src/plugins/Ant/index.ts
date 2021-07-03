@@ -1,5 +1,6 @@
 import {
   Layout,
+  Statistic,
   Breadcrumb,
   Menu,
   Button,
@@ -15,6 +16,7 @@ import {
   Radio,
   DatePicker,
   Col,
+  Card,
   Icon,
   Checkbox,
   Switch,
@@ -36,6 +38,7 @@ const ant = {
     Vue.component(Layout.Header.name, Layout.Header);
     Vue.component(Layout.Footer.name, Layout.Footer);
     Vue.component(Layout.Content.name, Layout.Content);
+    Vue.component(Statistic.name, Statistic);
     Vue.component(Breadcrumb.name, Breadcrumb);
     Vue.component(Breadcrumb.Item.name, Breadcrumb.Item);
     Vue.component(Menu.name, Menu);
@@ -64,6 +67,7 @@ const ant = {
     Vue.component(Radio.Group.name, Radio.Group);
     Vue.component(DatePicker.name, DatePicker);
     Vue.component(Col.name, Col);
+    Vue.component(Card.name, Card);
     Vue.component(Icon.name, Icon);
     Vue.component(Checkbox.name, Checkbox);
     Vue.component(Checkbox.Group.name, Checkbox.Group);
