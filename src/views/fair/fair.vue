@@ -237,6 +237,8 @@ import { ValidateErrorEntity } from "ant-design-vue/es/form/interface";
 //引入时间配合日期选择器使用
 import moment, { Moment } from "moment";
 import { message, DatePicker } from "ant-design-vue";
+import "moment/locale/zh-cn";
+moment.locale("zh-cn");
 
 // 引入与flask后端交互的http api方法
 import {

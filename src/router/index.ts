@@ -16,7 +16,7 @@ const routes = [
         component: () => import("../views/dashboard/index.vue"),
         meta: {
           isShow: true,
-          title: "仪表盘",
+          title: "首页",
           auth: true,
         },
       },
@@ -80,16 +80,16 @@ const routes = [
           auth: true,
         },
       },
-      {
-        path: "monitor",
-        name: "monitor",
-        component: () => import("../views/monitor/index.vue"),
-        meta: {
-          isShow: true,
-          title: "监控",
-          auth: true,
-        },
-      },
+      // {
+      //   path: "monitor",
+      //   name: "monitor",
+      //   component: () => import("../views/monitor/index.vue"),
+      //   meta: {
+      //     isShow: true,
+      //     title: "监控",
+      //     auth: true,
+      //   },
+      // },
     ],
   },
   {

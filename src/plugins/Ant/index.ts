@@ -28,6 +28,7 @@ import {
   Tag,
   List,
   InputNumber,
+  Timeline,
 } from "ant-design-vue";
 // import { Divider } from 'ant-design-vue/lib/vc-menu'
 
@@ -68,10 +69,13 @@ const ant = {
     Vue.component(DatePicker.name, DatePicker);
     Vue.component(Col.name, Col);
     Vue.component(Card.name, Card);
+    Vue.component(Card.Grid.name, Card.Grid);
     Vue.component(Icon.name, Icon);
     Vue.component(Checkbox.name, Checkbox);
     Vue.component(Checkbox.Group.name, Checkbox.Group);
     Vue.component(Switch.name, Switch);
+    Vue.component(Timeline.name, Timeline);
+    Vue.component(Timeline.Item.name, Timeline.Item);
     Vue.component(Drawer.name, Drawer);
     Vue.component(Popconfirm.name, Popconfirm);
     Vue.component(Tooltip.name, Tooltip);

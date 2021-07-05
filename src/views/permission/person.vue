@@ -43,7 +43,7 @@
           </a-select>
         </a-form-item>
         <a-form-item label="说明：" name="remark">
-          <a-text>1-管理角色；2-服务角色</a-text>
+          1-管理角色；2-服务角色
         </a-form-item>
       </a-form>
       <div
@@ -110,7 +110,8 @@
         >
           <a-form :model="form" :label-col="labelCol" :wrapper-col="wrapperCol">
             <a-form-item label="账号：">
-              <a-input v-model:value="editableData.name" />
+              {{ editableData.name }}
+              <!-- <a-input v-model:value="editableData.name" /> -->
             </a-form-item>
             <a-form-item label="邮箱：">
               <a-input v-model:value="editableData.email" />
@@ -130,7 +131,7 @@
               <!-- <a-input v-model:value="editableData.role_id" /> -->
             </a-form-item>
             <a-form-item label="说明：" name="remark">
-              <a-text>1-管理角色；2-服务角色</a-text>
+              1-管理角色；2-服务角色
             </a-form-item>
           </a-form>
           <div

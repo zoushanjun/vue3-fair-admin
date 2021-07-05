@@ -7,9 +7,6 @@
     :pagination="{ pageSize: 50 }"
     :scroll="{ y: 240 }"
     :rowKey="(record) => record.id"
-    :rowClassName="
-      (record, index) => (index % 2 === 1 ? 'table-striped' : null)
-    "
     size="small"
   >
   </a-table>

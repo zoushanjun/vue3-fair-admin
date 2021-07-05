@@ -201,9 +201,9 @@
     </a-drawer>
 
     <!-- 库存管理页面导出EXCEL功能 -->
-    <a-button shape="round" style="margin-left: 10px"
+    <!-- <a-button shape="round" style="margin-left: 10px"
       ><template #icon><FileExcelOutlined /></template>导出</a-button
-    >
+    > -->
     <!-- 库存管理页面搜索功能 -->
     <!-- <a-input-search
       v-model:value="searchValue"
@@ -503,6 +503,7 @@ interface FormInventory {
   devAcct: string;
   devPwd: string;
   devStatus: string;
+  devRemark: string;
 }
 
 // 定义库存管理父表头
@@ -631,29 +632,6 @@ const innerColumns = [
 export default defineComponent({
   name: "stock",
   setup() {
-    // const fatherData = [
-    //   {
-    //     model: "C9500",
-    //     kucun: "5",
-    //     xiangmu: "2",
-    //     weixiu: "2",
-    //     baofei: "0",
-    //     waijie: "2",
-    //     qita: "0",
-    //     zongshu: "9",
-    //   },
-    //   {
-    //     model: "C9500-40X",
-    //     kucun: "2",
-    //     xiangmu: "0",
-    //     weixiu: "1",
-    //     baofei: "2",
-    //     waijie: "1",
-    //     qita: "2",
-    //     zongshu: "12",
-    //   },
-    // ];
-
     // ref包裹的数据需要通过.value来获值
     const ListData = ref([]);
     const modelData = reactive([]);
@@ -771,6 +749,7 @@ export default defineComponent({
       devAcct: "",
       devPwd: "",
       devStatus: "",
+      devRemark: "",
     });
 
     //ref需要加类型验证，不然在获取formRef.value时会有类型的错误提示

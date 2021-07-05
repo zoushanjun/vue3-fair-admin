@@ -6,12 +6,12 @@
       </div>
       >
       <!-- 下面注释的行可以实现菜单高亮 -->
-      <!-- <a-menu theme="dark" mode="inline" v-model:selectedKeys="selectedKeys"> -->
-      <a-menu theme="dark" mode="inline" :selectedKeys="[$route.path]">
+      <a-menu theme="dark" mode="inline" v-model:selectedKeys="selectedKeys">
+        <!-- <a-menu theme="dark" mode="inline" :selectedKeys="[$route.path]"> -->
         <a-menu-item key="1">
           <router-link to="/dashboard">
             <DashboardOutlined />
-            <span v-show="collapsed">仪表盘</span>
+            <span v-show="collapsed">首页</span>
           </router-link>
         </a-menu-item>
         <a-menu-item key="2">
@@ -109,11 +109,11 @@
             </a-dropdown>
           </a-space>
         </span>
-        <span style="float: right; width: 50px; margin-right: 0">
-          <a href="#" @click.prevent="refresh"
+        <!-- <span style="float: right; width: 50px; margin-right: 0">
+          <a @click="refresh()"
             ><a-tooltip title="刷新" :color="'blue'"><RedoOutlined /></a-tooltip
           ></a>
-        </span>
+        </span> -->
       </a-layout-header>
       <a-layout-content>
         <router-view />
@@ -158,6 +158,9 @@ export default defineComponent({
       router.push("/login");
     };
     const refresh = inject("reload");
+    // const handleClick = () => {
+    //   refresh;
+    // };
 
     const store = useStore();
     onMounted(() => {
@@ -171,6 +174,7 @@ export default defineComponent({
       currentUser,
       logout,
       refresh,
+      // handleClick,
     };
   },
   components: {

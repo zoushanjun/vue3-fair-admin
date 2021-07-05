@@ -4,56 +4,56 @@
       <a-col :span="2">
         <a-statistic
           title="出口层"
-          :value="DashBoardArry.out"
+          :value="DashBoardArry['out']"
           style="margin-right: 50px"
         />
       </a-col>
       <a-col :span="2">
         <a-statistic
           title="核心层"
-          :value="DashBoardArry.core"
+          :value="DashBoardArry['core']"
           style="margin-right: 50px"
         />
       </a-col>
       <a-col :span="2">
         <a-statistic
           title="汇聚层"
-          :value="DashBoardArry.disb"
+          :value="DashBoardArry['disb']"
           style="margin-right: 50px"
         />
       </a-col>
       <a-col :span="2">
         <a-statistic
           title="接入层"
-          :value="DashBoardArry.acc"
+          :value="DashBoardArry['acc']"
           style="margin-right: 50px"
         />
       </a-col>
       <a-col :span="2">
         <a-statistic
           title="防火墙"
-          :value="DashBoardArry.fw"
+          :value="DashBoardArry['fw']"
           style="margin-right: 50px"
         />
       </a-col>
       <a-col :span="2">
         <a-statistic
           title="控制器"
-          :value="DashBoardArry.wlc"
+          :value="DashBoardArry['wlc']"
           style="margin-right: 50px"
         />
       </a-col>
       <a-col :span="2">
         <a-statistic
           title="无线AP"
-          :value="DashBoardArry.ap"
+          :value="DashBoardArry['ap']"
           style="margin-right: 50px"
         />
       </a-col>
       <a-col :span="2">
         <a-statistic
           title="其它"
-          :value="DashBoardArry.other"
+          :value="DashBoardArry['other']"
           style="margin-right: 50px"
         />
       </a-col>
