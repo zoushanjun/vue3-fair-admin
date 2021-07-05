@@ -59,7 +59,7 @@
       </a-col>
       <a-col :span="2">
         <a-tooltip
-          title="根据设备名称关键词进行统计[出口层Out][核心层Core][汇聚层Dstb][接入层Acc][防火墙Fw][控制器WLC][无线AP]"
+          title="根据用途/组别关键词进行统计[出口层Out][核心层Core][汇聚层Dstb][接入层Acc][防火墙Fw][控制器WLC][无线AP]"
           :color="'blue'"
           ><InfoCircleTwoTone
         /></a-tooltip>
@@ -305,7 +305,7 @@ const Columns = [
     title: "设备名",
     dataIndex: "deviceName",
     key: "deviceName",
-    width: 200,
+    // width: 100,
     ellipsis: true,
   },
   {
@@ -320,7 +320,7 @@ const Columns = [
     name: "SN_MAC",
     dataIndex: "SN_MAC",
     key: "SN_MAC",
-    width: 180,
+    width: 140,
     ellipsis: true,
   },
   {
@@ -351,7 +351,7 @@ const Columns = [
     name: "location",
     dataIndex: "location",
     key: "location",
-
+    width: 80,
     ellipsis: true,
   },
 
@@ -422,43 +422,43 @@ export default defineComponent({
       let out_var = rawListData.filter(
         (item) =>
           (item.devStatus == "在线" || item.devStatus == "离线") &&
-          item.deviceName.indexOf("Out") > -1
+          item.devUsage.indexOf("Out") > -1
       ).length;
       //核心层设备统计数据：在线或者离线的设备，并且名称包括Core
       let core_var = rawListData.filter(
         (item) =>
           (item.devStatus == "在线" || item.devStatus == "离线") &&
-          item.deviceName.indexOf("Core") > -1
+          item.devUsage.indexOf("Core") > -1
       ).length;
       //汇聚层设备统计数据：在线或者离线的设备，并且名称包括Disb
       let disb_var = rawListData.filter(
         (item) =>
           (item.devStatus == "在线" || item.devStatus == "离线") &&
-          item.deviceName.indexOf("Dstb") > -1
+          item.devUsage.indexOf("Dstb") > -1
       ).length;
       //接入层设备统计数据：在线或者离线的设备，并且名称包括Acc
       let acc_var = rawListData.filter(
         (item) =>
           (item.devStatus == "在线" || item.devStatus == "离线") &&
-          item.deviceName.indexOf("Acc") > -1
+          item.devUsage.indexOf("Acc") > -1
       ).length;
       //防火墙设备统计数据：在线或者离线的设备，并且名称包括Fw
       let fw_var = rawListData.filter(
         (item) =>
           (item.devStatus == "在线" || item.devStatus == "离线") &&
-          item.deviceName.indexOf("Fw") > -1
+          item.devUsage.indexOf("Fw") > -1
       ).length;
       //控制器设备统计数据：在线或者离线的设备，并且名称包括WLC
       let wlc_var = rawListData.filter(
         (item) =>
           (item.devStatus == "在线" || item.devStatus == "离线") &&
-          item.deviceName.indexOf("WLC") > -1
+          item.devUsage.indexOf("WLC") > -1
       ).length;
       //无线AP设备统计数据：在线或者离线的设备，并且名称包括AP
       let ap_var = rawListData.filter(
         (item) =>
           (item.devStatus == "在线" || item.devStatus == "离线") &&
-          item.deviceName.indexOf("AP") > -1
+          item.devUsage.indexOf("AP") > -1
       ).length;
       //其它设备统计数据：在线或者离线的设备，命名不符合上述规则的
       let other_var =

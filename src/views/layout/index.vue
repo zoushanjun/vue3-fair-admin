@@ -11,7 +11,7 @@
         <a-menu-item key="1">
           <router-link to="/dashboard">
             <DashboardOutlined />
-            <span v-show="collapsed">首页</span>
+            <span>首页</span>
           </router-link>
         </a-menu-item>
         <a-menu-item key="2">

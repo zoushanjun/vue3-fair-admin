@@ -748,7 +748,7 @@ export default defineComponent({
       devUsage: "",
       devAcct: "",
       devPwd: "",
-      devStatus: "",
+      devStatus: "库存",
       devRemark: "",
     });
 
@@ -1041,7 +1041,7 @@ export default defineComponent({
 
       handleChange,
       handleChangeModel,
-      devStatus: ref("库存"),
+      // devStatus: ref("库存"),
     };
   },
   components: {

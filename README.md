@@ -25,3 +25,13 @@ Run `Volar: Switch TS Plugin on/off` from VSCode command palette.
 3. Open `src/main.ts` in VSCode
 4. Open the VSCode command palette
 5. Search and run "Select TypeScript version" -> "Use workspace version"
+
+### version
+
+2021.7.5 1.0.1 版本
+1-最近展会 按照撤展时间进行排序
+2-库存管理->新增->状态字段缺省为"库存"
+3-资产统计-从用途/组别字段进行抽取关键词
+
+2021.7.5 1.0.0 版本发布
+2021.3.20 启动开发
