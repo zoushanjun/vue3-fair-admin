@@ -28,6 +28,10 @@ Run `Volar: Switch TS Plugin on/off` from VSCode command palette.
 
 ### version
 
+2021.7.6 1.0.2 版本
+1-解决刷新页面当前菜单无法保持高亮问题
+2-增加刷新按钮
+
 2021.7.5 1.0.1 版本
 1-最近展会 按照撤展时间进行排序
 2-库存管理->新增->状态字段缺省为"库存"

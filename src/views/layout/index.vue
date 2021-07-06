@@ -6,51 +6,51 @@
       </div>
       >
       <!-- 下面注释的行可以实现菜单高亮 -->
-      <a-menu theme="dark" mode="inline" v-model:selectedKeys="selectedKeys">
-        <!-- <a-menu theme="dark" mode="inline" :selectedKeys="[$route.path]"> -->
-        <a-menu-item key="1">
+      <!-- <a-menu theme="dark" mode="inline" v-model:selectedKeys="selectedKeys"> -->
+      <a-menu theme="dark" mode="inline" :selectedKeys="[$route.path]">
+        <a-menu-item key="/dashboard">
           <router-link to="/dashboard">
             <DashboardOutlined />
             <span>首页</span>
           </router-link>
         </a-menu-item>
-        <a-menu-item key="2">
+        <a-menu-item key="/inventory">
           <router-link to="/inventory">
             <DatabaseOutlined />
             <span>资产</span>
           </router-link>
         </a-menu-item>
-        <a-menu-item key="3">
+        <a-menu-item key="/fair">
           <router-link to="/fair">
             <EyeOutlined />
             <span>展会</span>
           </router-link>
         </a-menu-item>
-        <a-menu-item key="4">
+        <a-menu-item key="/workorder">
           <router-link to="/workorder">
             <CustomerServiceOutlined />
             <span>工单</span>
           </router-link>
         </a-menu-item>
-        <a-menu-item key="5">
+        <a-menu-item key="/job">
           <router-link to="/job">
             <PlayCircleOutlined />
             <span>作业</span>
           </router-link>
         </a-menu-item>
-        <a-menu-item key="6">
+        <a-menu-item key="/setup">
           <router-link to="/setup">
             <SettingOutlined />
             <span>配置</span>
           </router-link>
         </a-menu-item>
-        <a-menu-item key="7">
+        <a-menu-item key="/permission">
           <router-link to="/permission">
             <TeamOutlined />
             <span>权限</span>
           </router-link>
         </a-menu-item>
-        <!-- <a-menu-item key="8">
+        <!-- <a-menu-item key="/monitor">
           <router-link to="/monitor">
             <RadarChartOutlined />
             <span>监控</span>
@@ -109,11 +109,11 @@
             </a-dropdown>
           </a-space>
         </span>
-        <!-- <span style="float: right; width: 50px; margin-right: 0">
-          <a @click="refresh()"
+        <span style="float: right; width: 50px; margin-right: 0">
+          <a @click="handleClick"
             ><a-tooltip title="刷新" :color="'blue'"><RedoOutlined /></a-tooltip
           ></a>
-        </span> -->
+        </span>
       </a-layout-header>
       <a-layout-content>
         <router-view />
@@ -157,9 +157,14 @@ export default defineComponent({
       sessionStorage.removeItem("Login-user");
       router.push("/login");
     };
-    const refresh = inject("reload");
-    // const handleClick = () => {
-    //   refresh;
+    const refresh = inject<Function>("reload");
+    const handleClick = () => {
+      // 刷新当前页面
+      refresh && refresh();
+    };
+
+    // const refresh = () => {
+    //   location.reload();
     // };
 
     const store = useStore();
@@ -174,7 +179,7 @@ export default defineComponent({
       currentUser,
       logout,
       refresh,
-      // handleClick,
+      handleClick,
     };
   },
   components: {
