@@ -243,7 +243,7 @@
               <a-tooltip title="编辑" :color="'blue'"><EditTwoTone /></a-tooltip
             ></a>
             <a-drawer
-              v-model:visible="editDrawerVisible"
+              v-model:visible="editDrawerVisible[record.id]"
               title="编辑库存"
               :width="600"
               :scroll="{ y: 240 }"
@@ -254,7 +254,7 @@
                 animation: 'none',
               }"
               :destroyOnClose="true"
-              @ok="editDrawerVisible = false"
+              @ok="editDrawerVisible[record.id] = false"
             >
               <a-form
                 :model="form"
@@ -298,19 +298,9 @@
                       :wrapper-col="{ span: 15 }"
                       label="型号："
                     >
-                      <a-input v-model:value="editableData.model" />
-                    </a-form-item>
-                  </a-col>
-                </a-row>
-                <a-row :gutter="16">
-                  <a-col :span="12">
-                    <a-form-item
-                      :labelCol="{ span: 7 }"
-                      :wrapper-col="{ span: 15 }"
-                      label="类别："
-                    >
+                      <!-- <a-input v-model:value="editableData.model" /> -->
                       <a-select
-                        v-model:value="editableData.category"
+                        v-model:value="editableData.model"
                         ref="select1"
                         @change="handleChangeModel"
                       >
@@ -320,6 +310,17 @@
                           >{{ item }}</a-select-option
                         >
                       </a-select>
+                    </a-form-item>
+                  </a-col>
+                </a-row>
+                <a-row :gutter="16">
+                  <a-col :span="12">
+                    <a-form-item
+                      :labelCol="{ span: 7 }"
+                      :wrapper-col="{ span: 15 }"
+                      label="平台："
+                    >
+                      <a-input v-model:value="editableData.platform" />
                     </a-form-item>
                   </a-col>
                   <a-col :span="12">
@@ -424,12 +425,12 @@
               >
                 <a-button
                   style="margin-right: 8px"
-                  @click="handleEditDrawerClose()"
+                  @click="handleEditDrawerClose(editableData.id)"
                   >取消</a-button
                 >
                 <a-button
                   style="margin-right: 8px"
-                  @click="handlePutInvt(editableData)"
+                  @click="handlePutInvt(editableData, editableData.id)"
                   >提交</a-button
                 >
               </div>
@@ -685,6 +686,7 @@ export default defineComponent({
       // 获取型号数据
       getInvtModelList()
         .then((res) => {
+          console.log("modellist:" + res.data);
           //复制数据
           for (const k in res.data) {
             modelData[k] = res.data[k].model;
@@ -885,7 +887,8 @@ export default defineComponent({
     };
 
     // 修改库存
-    const editDrawerVisible = ref<boolean>(false);
+    const editDrawerVisible = reactive({});
+    // const editDrawerVisible = ref<boolean>(false);
     const editableData: UnwrapRef<Record<string, FormInventory>> = reactive({});
     const handleEdit = (record: any) => {
       //获取型号
@@ -899,7 +902,7 @@ export default defineComponent({
         .catch((err) => {
           console.log(err);
         });
-      editDrawerVisible.value = true;
+      editDrawerVisible[record.id] = true;
       //复制数据用于编辑
       for (const k in record) {
         editableData[k] = record[k];
@@ -907,11 +910,11 @@ export default defineComponent({
       // console.log(editableData);
     };
 
-    const handlePutInvt = (Data: object) => {
+    const handlePutInvt = (Data: object, id) => {
       putInvt(Data).then((res) => {
         if (res.status == 200) {
           message.success("更新成功！");
-          editDrawerVisible.value = false;
+          editDrawerVisible[id] = false;
           const data = {
             msg:
               sessionStorage.getItem("Login-user") +
@@ -934,12 +937,13 @@ export default defineComponent({
               calFatherData(modelData, rawListData);
               //刷新展开行数据
               if (expandedRowKeys.value[0]) {
+                console.log("item.model" + expandedRowKeys.value[0]);
                 stockData.value.length = 0;
                 stockData.value = rawListData.filter(
                   (item) =>
                     item.model == expandedRowKeys.value[0] &&
-                    item.devStaus != "离线" &&
-                    item.devStaus != "在线"
+                    item.devStatus != "离线" &&
+                    item.devStatus != "在线"
                 );
               }
             })
@@ -950,8 +954,8 @@ export default defineComponent({
       });
     };
 
-    const handleEditDrawerClose = () => {
-      editDrawerVisible.value = false;
+    const handleEditDrawerClose = (id) => {
+      editDrawerVisible[id] = false;
     };
 
     //删除库存,以json格式进行传递
@@ -982,8 +986,8 @@ export default defineComponent({
                 stockData.value = rawListData.filter(
                   (item) =>
                     item.model == expandedRowKeys.value[0] &&
-                    item.devStaus != "离线" &&
-                    item.devStaus != "在线"
+                    item.devStatus != "离线" &&
+                    item.devStatus != "在线"
                 );
               }
             })

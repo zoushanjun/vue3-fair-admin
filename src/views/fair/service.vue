@@ -95,7 +95,7 @@
         </a>
 
         <a-drawer
-          v-model:visible="editDrawerVisible"
+          v-model:visible="editDrawerVisible[record.id]"
           title="修改服务"
           :width="600"
           :scroll="{ y: 240 }"
@@ -106,7 +106,7 @@
             animation: 'none',
           }"
           :destroyOnClose="true"
-          @ok="editDrawerVisible = false"
+          @ok="editDrawerVisible[record.id] = false"
         >
           <a-form :model="form" :label-col="labelCol" :wrapper-col="wrapperCol">
             <a-form-item label="服务名称：">
@@ -135,10 +135,14 @@
               zIndex: 1,
             }"
           >
-            <a-button style="margin-right: 8px" @click="handleEditDrawerClose()"
+            <a-button
+              style="margin-right: 8px"
+              @click="handleEditDrawerClose(editableData.id)"
               >取消</a-button
             >
-            <a-button style="margin-right: 8px" @click="handlePut(editableData)"
+            <a-button
+              style="margin-right: 8px"
+              @click="handlePut(editableData, editableData.id)"
               >提交</a-button
             >
           </div>
@@ -377,25 +381,25 @@ export default defineComponent({
     };
 
     // 修改服务-逻辑处理部分
-    const editDrawerVisible = ref<boolean>(false);
+    const editDrawerVisible = reactive({});
     const editableData: UnwrapRef<Record<string, FormService>> = reactive({});
     const handleEdit = (record: any) => {
-      editDrawerVisible.value = true;
+      editDrawerVisible[record.id] = true;
       //复制数据用于编辑
       for (const k in record) {
         editableData[k] = record[k];
       }
     };
     //修改服务取消按钮逻辑处理
-    const handleEditDrawerClose = () => {
-      editDrawerVisible.value = false;
+    const handleEditDrawerClose = (id) => {
+      editDrawerVisible[id] = false;
     };
     // 修改服务抽屉提交按钮逻辑处理
-    const handlePut = (Data: object) => {
+    const handlePut = (Data: object, id) => {
       putService(Data).then((res) => {
         if (res.status == 200) {
           message.success("更新成功！");
-          editDrawerVisible.value = false;
+          editDrawerVisible[id] = false;
           // 刷新当前页面
           const params = {};
           getServiceList(params)

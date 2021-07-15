@@ -95,7 +95,7 @@
           <a-tooltip title="编辑" :color="'blue'"><EditTwoTone /></a-tooltip
         ></a>
         <a-drawer
-          v-model:visible="editDrawerVisible"
+          v-model:visible="editDrawerVisible[record.id]"
           title="编辑资产"
           :width="600"
           :scroll="{ y: 240 }"
@@ -106,7 +106,7 @@
             animation: 'none',
           }"
           :destroyOnClose="true"
-          @ok="editDrawerVisible = false"
+          @ok="editDrawerVisible[record.id] = false"
         >
           <a-form :model="form" :label-col="labelCol" :wrapper-col="wrapperCol">
             <a-row :gutter="16">
@@ -249,12 +249,14 @@
               zIndex: 1,
             }"
           >
-            <a-button style="margin-right: 8px" @click="handleEditDrawerClose()"
+            <a-button
+              style="margin-right: 8px"
+              @click="handleEditDrawerClose(record)"
               >取消</a-button
             >
             <a-button
               style="margin-right: 8px"
-              @click="handlePutInvt(editableData)"
+              @click="handlePutInvt(editableData, editableData.id)"
               >提交</a-button
             >
           </div>
@@ -361,6 +363,7 @@ const Columns = [
     dataIndex: "devUsage",
     key: "devUsage",
     width: 80,
+    ellipsis: true,
   },
   {
     title: "登录账号",
@@ -552,33 +555,22 @@ export default defineComponent({
     };
 
     // 修改资产
-    const editDrawerVisible = ref<boolean>(false);
+    // const editDrawerVisible = ref<boolean>(false);
+    const editDrawerVisible = reactive({});
     const editableData: UnwrapRef<Record<string, FormInventory>> = reactive({});
     const handleEdit = (record: any) => {
-      //获取资产类别
-      // getInvtCategoryList()
-      //   .then((res) => {
-      //     //复制数据
-      //     for (const k in res.data) {
-      //       CategoryData[k] = res.data[k].category;
-      //     }
-      //   })
-      //   .catch((err) => {
-      //     console.log(err);
-      //   });
-      editDrawerVisible.value = true;
+      editDrawerVisible[record.id] = true;
       //复制数据用于编辑
       for (const k in record) {
         editableData[k] = record[k];
       }
-      console.log(editableData);
     };
 
-    const handlePutInvt = (Data: object) => {
+    const handlePutInvt = (Data: object, id) => {
       putInvt(Data).then((res) => {
         if (res.status == 200) {
           message.success("更新成功！");
-          editDrawerVisible.value = false;
+          editDrawerVisible[id] = false;
           // 刷新当前页面
           const params = { search: "" };
           getInvtList(params)
@@ -593,8 +585,8 @@ export default defineComponent({
       });
     };
 
-    const handleEditDrawerClose = () => {
-      editDrawerVisible.value = false;
+    const handleEditDrawerClose = (record) => {
+      editDrawerVisible[record.id] = false;
     };
 
     const handleChange = (value: string) => {

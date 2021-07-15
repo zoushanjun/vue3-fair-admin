@@ -31,7 +31,7 @@
                 ><EditTwoTone /></a-tooltip
             ></a>
             <a-drawer
-              v-model:visible="editDrawerVisible"
+              v-model:visible="editDrawerVisible[record.id]"
               title="作业资料编辑"
               :width="600"
               :body-style="{ paddingBottom: '80px' }"
@@ -40,7 +40,7 @@
                 background: '#778899',
                 animation: 'none',
               }"
-              @ok="editDrawerVisible = false"
+              @ok="editDrawerVisible[record.id] = false"
             >
               <a-form
                 ref="formRef"
@@ -98,12 +98,12 @@
               >
                 <a-button
                   style="margin-right: 8px"
-                  @click="handleEditDrawerClose()"
+                  @click="handleEditDrawerClose(editableData.id)"
                   >取消</a-button
                 >
                 <a-button
                   style="margin-right: 8px"
-                  @click="handlePutOrder(editableData)"
+                  @click="handlePutOrder(editableData, editableData.id)"
                   >提交</a-button
                 >
               </div>
@@ -119,7 +119,7 @@
                 ><PlaySquareTwoTone /></a-tooltip
             ></a>
             <a-drawer
-              v-model:visible="jobDrawerVisible"
+              v-model:visible="jobDrawerVisible[record.id]"
               title="作业终端"
               :width="600"
               :body-style="{ paddingBottom: '80px' }"
@@ -128,7 +128,7 @@
                 background: '#778899',
                 animation: 'none',
               }"
-              @ok="jobDrawerVisible = false"
+              @ok="jobDrawerVisible[record.id] = false"
             >
               <div>专线配置信息：</div>
               <div>{{ editableData.orderConfig }}</div>
@@ -158,7 +158,7 @@
               >
                 <a-button
                   style="margin-right: 8px"
-                  @click="handleJobDrawerClose()"
+                  @click="handleJobDrawerClose(record.id)"
                   >关闭</a-button
                 >
               </div>
@@ -420,9 +420,10 @@ export default defineComponent({
 
     // 作业资料编辑
     const formRef = ref<any>(null);
-    const editDrawerVisible = ref<boolean>(false);
+    const editDrawerVisible = reactive({});
 
     const editableData = reactive({
+      id: null,
       orderLocation: "",
       orderSvcItem: "",
       orderTel: "",
@@ -431,23 +432,23 @@ export default defineComponent({
       orderConfig: "",
     });
     const handleEdit = (record: any) => {
-      editDrawerVisible.value = true;
+      editDrawerVisible[record.id] = true;
       //复制数据用于编辑
       for (const k in record) {
         editableData[k] = record[k];
       }
     };
 
-    const handleEditDrawerClose = () => {
-      editDrawerVisible.value = false;
+    const handleEditDrawerClose = (id) => {
+      editDrawerVisible[id] = false;
     };
 
-    const handlePutOrder = (Data: object) => {
+    const handlePutOrder = (Data: object, id) => {
       // console.log(Data);
       putOrder(Data).then((res) => {
         if (res.status == 200) {
           message.success("更新成功！");
-          editDrawerVisible.value = false;
+          editDrawerVisible[id] = false;
 
           // 刷新展开行工单数据
           const params = {
@@ -465,7 +466,7 @@ export default defineComponent({
     };
 
     const nornirSvrUrl = ref<string>();
-    const jobDrawerVisible = ref<boolean>(false);
+    const jobDrawerVisible = reactive({});
     const orderLineConfig = ref<string>();
     const handleJob = (record: any) => {
       // cmdParams.value = record.orderConfig;
@@ -478,7 +479,7 @@ export default defineComponent({
         " " +
         toRaw(record.orderConfig);
 
-      jobDrawerVisible.value = true;
+      jobDrawerVisible[record.id] = true;
       orderLineConfig.value = record.orderConfig;
       //复制数据
       for (const k in record) {
@@ -486,8 +487,8 @@ export default defineComponent({
       }
     };
 
-    const handleJobDrawerClose = () => {
-      jobDrawerVisible.value = false;
+    const handleJobDrawerClose = (id) => {
+      jobDrawerVisible[id] = false;
     };
 
     return {

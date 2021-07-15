@@ -127,7 +127,7 @@
             ><a-tooltip title="编辑" :color="'blue'"><EditTwoTone /></a-tooltip
           ></a>
           <a-drawer
-            v-model:visible="editDrawerVisible"
+            v-model:visible="editDrawerVisible[record.id]"
             title="修改展会"
             :width="600"
             :scroll="{ y: 240 }"
@@ -138,7 +138,7 @@
               animation: 'none',
             }"
             :destroyOnClose="true"
-            @ok="editDrawerVisible = false"
+            @ok="editDrawerVisible[record.id] = false"
           >
             <a-form
               :model="form"
@@ -185,12 +185,12 @@
             >
               <a-button
                 style="margin-right: 8px"
-                @click="handleEditDrawerClose()"
+                @click="handleEditDrawerClose(editableData.id)"
                 >取消</a-button
               >
               <a-button
                 style="margin-right: 8px"
-                @click="handlePutFair(editableData)"
+                @click="handlePutFair(editableData, editableData.id)"
                 >提交</a-button
               >
             </div>
@@ -499,21 +499,21 @@ export default defineComponent({
     };
 
     // 修改展会-逻辑处理部分
-    const editDrawerVisible = ref<boolean>(false);
+    const editDrawerVisible = reactive({});
     const editableData: UnwrapRef<Record<string, FormFair>> = reactive({});
     const handleEditFair = (record: any) => {
-      editDrawerVisible.value = true;
+      editDrawerVisible[record.id] = true;
       //复制数据用于编辑
       for (const k in record) {
         editableData[k] = record[k];
       }
     };
 
-    const handlePutFair = (Data: object) => {
+    const handlePutFair = (Data: object, id) => {
       putFair(Data).then((res) => {
         if (res.status == 200) {
           message.success("更新成功！");
-          editDrawerVisible.value = false;
+          editDrawerVisible[id] = false;
           // 刷新当前页面
           const params = {};
           getFairList(params)
@@ -527,8 +527,8 @@ export default defineComponent({
       });
     };
 
-    const handleEditDrawerClose = () => {
-      editDrawerVisible.value = false;
+    const handleEditDrawerClose = (id) => {
+      editDrawerVisible[id] = false;
     };
 
     return {

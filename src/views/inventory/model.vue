@@ -48,7 +48,7 @@
           ><a-tooltip title="编辑" :color="'blue'"><EditTwoTone /></a-tooltip
         ></a>
         <a-drawer
-          v-model:visible="editDrawerVisible"
+          v-model:visible="editDrawerVisible[record.id]"
           title="修改型号"
           :width="600"
           :scroll="{ y: 240 }"
@@ -59,7 +59,7 @@
             animation: 'none',
           }"
           :destroyOnClose="true"
-          @ok="editDrawerVisible = false"
+          @ok="editDrawerVisible[record.id] = false"
         >
           <a-form :model="form" :label-col="labelCol" :wrapper-col="wrapperCol">
             <a-form-item label="编号：">
@@ -82,10 +82,12 @@
               zIndex: 1,
             }"
           >
-            <a-button style="margin-right: 8px" @click="handleEditDrawerClose()"
+            <a-button
+              style="margin-right: 8px"
+              @click="handleEditDrawerClose(record.id)"
               >取消</a-button
             >
-            <a-button style="margin-right: 8px" @click="handlePut"
+            <a-button style="margin-right: 8px" @click="handlePut(editableData)"
               >提交</a-button
             >
           </div>
@@ -252,22 +254,23 @@ export default defineComponent({
     };
 
     // 修改型号
-    const editDrawerVisible = ref<boolean>(false);
+    // const editDrawerVisible = ref<boolean>(false);
+    const editDrawerVisible = reactive({});
     const editable = ref<boolean>(false);
     const editableData: UnwrapRef<Record<string, FormModel>> = reactive({});
     const handleEdit = (record: any) => {
-      editDrawerVisible.value = true;
+      editDrawerVisible[record.id] = true;
       for (const k in record) {
         editableData[k] = record[k];
       }
       // console.log(editableData);
     };
 
-    const handleEditDrawerClose = () => {
-      editDrawerVisible.value = false;
+    const handleEditDrawerClose = (id) => {
+      editDrawerVisible[id] = false;
     };
 
-    const handlePut = () => {
+    const handlePut = (editableData) => {
       const params = {
         id: editableData.id,
         sn: editableData.sn,
@@ -278,7 +281,7 @@ export default defineComponent({
         .then((res) => {
           if (res.status == 200) {
             message.success(res.data.message);
-            editDrawerVisible.value = false; //关闭抽屉
+            editDrawerVisible[editableData.id] = false; //关闭抽屉
             const data = {
               msg:
                 sessionStorage.getItem("Login-user") +

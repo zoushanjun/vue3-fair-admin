@@ -47,7 +47,7 @@
       <!-- 点击新增按钮，弹出新增工单抽屉 -->
 
       <a-drawer
-        v-model:visible="drawerVisible"
+        v-model:visible="drawerVisible[record.id]"
         title="新增工单"
         :width="600"
         :body-style="{ paddingBottom: '80px' }"
@@ -56,7 +56,7 @@
           background: '#778899',
           animation: 'none',
         }"
-        @ok="drawerVisible = false"
+        @ok="drawerVisible[record.id] = false"
       >
         <a-form
           ref="formRef"
@@ -163,10 +163,12 @@
           }"
         >
           <a-button style="margin-right: 8px" @click="resetForm">重置</a-button>
-          <a-button style="margin-right: 8px" @click="handleDrawerClose"
+          <a-button
+            style="margin-right: 8px"
+            @click="handleDrawerClose(record.id)"
             >取消</a-button
           >
-          <a-button type="primary" @click="handleAddSubmit(form)"
+          <a-button type="primary" @click="handleAddSubmit(form, record.id)"
             >提交</a-button
           >
         </div>
@@ -194,7 +196,7 @@
                 ><EditTwoTone /></a-tooltip
             ></a>
             <a-drawer
-              v-model:visible="editDrawerVisible"
+              v-model:visible="editDrawerVisible[record.id]"
               title="编辑工单"
               :width="600"
               :body-style="{ paddingBottom: '80px' }"
@@ -203,7 +205,7 @@
                 background: '#778899',
                 animation: 'none',
               }"
-              @ok="editDrawerVisible = false"
+              @ok="editDrawerVisible[record.id] = false"
             >
               <a-form
                 ref="formRef"
@@ -303,12 +305,12 @@
               >
                 <a-button
                   style="margin-right: 8px"
-                  @click="handleEditDrawerClose()"
+                  @click="handleEditDrawerClose(record.id)"
                   >取消</a-button
                 >
                 <a-button
                   style="margin-right: 8px"
-                  @click="handlePutOrder(editableData)"
+                  @click="handlePutOrder(editableData, record.id)"
                   >提交</a-button
                 >
               </div>
@@ -667,7 +669,7 @@ export default defineComponent({
         });
     };
     // 增加工单
-    const drawerVisible = ref<boolean>(false);
+    const drawerVisible = reactive({});
     const fairCopiedName = ref<string>("");
     const fairCopiedId = ref<number>();
     const serviceData = reactive([]); //定义服务列表数据
@@ -683,7 +685,7 @@ export default defineComponent({
         .catch((err) => {
           console.log(err);
         });
-      drawerVisible.value = true;
+      drawerVisible[record.id] = true;
       //复制展会名称和ID
       fairCopiedName.value = record.fairName;
       fairCopiedId.value = record.id;
@@ -728,11 +730,11 @@ export default defineComponent({
       orderRemark: "",
     });
 
-    const handleAddSubmit = (form) => {
+    const handleAddSubmit = (form, id) => {
       postOrder(form).then((res) => {
         if (res.status == 200) {
           message.success("新增工单成功！");
-          drawerVisible.value = false;
+          drawerVisible[id] = false;
           // 取出当前是哪一行展开
           // console.log(expandedRowKeys.value[0]);
           // 刷新展开行工单数据
@@ -775,14 +777,15 @@ export default defineComponent({
       form.orderRemark = "";
     };
 
-    const handleDrawerClose = () => {
-      drawerVisible.value = false;
+    const handleDrawerClose = (id) => {
+      drawerVisible[id] = false;
     };
 
     // 修改工单
-    const editDrawerVisible = ref<boolean>(false);
+    const editDrawerVisible = reactive({});
     // const editableData: UnwrapRef<Record<string, FormOrder>> = reactive({});
     const editableData = reactive({
+      id: null,
       orderLocation: "",
       orderSvcItem: "",
       orderUnitPrice: 0,
@@ -798,7 +801,7 @@ export default defineComponent({
       orderRemark: "",
     });
     const handleEdit = (record: any) => {
-      editDrawerVisible.value = true;
+      editDrawerVisible[record.id] = true;
       getServiceList()
         .then((res) => {
           //复制数据
@@ -844,16 +847,16 @@ export default defineComponent({
         editableData.orderUnitCommision * editableData.orderNum;
     };
 
-    const handleEditDrawerClose = () => {
-      editDrawerVisible.value = false;
+    const handleEditDrawerClose = (id) => {
+      editDrawerVisible[id] = false;
     };
 
-    const handlePutOrder = (Data: object) => {
-      // console.log(Data);
+    const handlePutOrder = (Data: object, id) => {
+      console.log(Data);
       putOrder(Data).then((res) => {
         if (res.status == 200) {
           message.success("更新成功！");
-          editDrawerVisible.value = false;
+          editDrawerVisible[id] = false;
 
           // 刷新展开行工单数据
           const params = {
