@@ -953,7 +953,7 @@ export default defineComponent({
 
         for (let i = 0; i < orderData.value.length; i++) {
           excelData.push({
-            orderLocation: orderData.value[i]["orderLocation"],
+            orderLocation: '="' + orderData.value[i]["orderLocation"] + '"', //解决带有字母e变成科学计数
             orderCustom: orderData.value[i]["orderCustom"],
             orderContacts: orderData.value[i]["orderContacts"],
             orderTel: orderData.value[i]["orderTel"],
@@ -1009,7 +1009,7 @@ export default defineComponent({
             }
           } else {
             var value = arrData[i][index] == null ? "" : arrData[i][index];
-            row += "<td align='center'>" + value + "</td>";
+            row += "<td align='center' >" + value + "</td>";
           }
         }
 

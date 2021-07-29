@@ -332,9 +332,9 @@ export default defineComponent({
     const form = reactive({
       fairName: "",
       sponsorInfo: "",
-      prepareTime: moment().format("L"),
-      startTime: moment().format("L"),
-      endTime: moment().format("L"),
+      prepareTime: moment(),
+      startTime: moment(),
+      endTime: moment(),
       location: "",
     });
 

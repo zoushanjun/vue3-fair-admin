@@ -57,6 +57,12 @@
                 <a-form-item label="服务项目：" class="bottom">
                   {{ editableData.orderSvcItem }}
                 </a-form-item>
+                <a-form-item label="数量：" class="bottom">
+                  {{ editableData.orderNum }}
+                </a-form-item>
+                <a-form-item label="客户名称：" class="bottom">
+                  {{ editableData.orderCustom }}
+                </a-form-item>
                 <a-form-item label="联系电话：" class="bottom">
                   {{ editableData.orderTel }}
                 </a-form-item>
@@ -246,21 +252,35 @@ const innerColumns = [
     title: "服务项目",
     dataIndex: "orderSvcItem",
     key: "orderSvcItem",
-    width: 200,
+    width: 100,
     ellipsis: true,
   },
-
+  {
+    title: "数量",
+    dataIndex: "orderNum",
+    key: "orderNum",
+    width: 50,
+    ellipsis: true,
+  },
+  {
+    title: "客户名称",
+    dataIndex: "orderCustom",
+    key: "orderCustom",
+    width: 100,
+    ellipsis: true,
+  },
   {
     title: "宽带账号密码",
     dataIndex: "orderAccout",
     key: "orderAccout",
+    width: 100,
     ellipsis: true,
   },
   {
     title: "专线配置信息",
     dataIndex: "orderConfig",
     key: "orderConfig",
-    width: 250,
+
     ellipsis: true,
   },
   { title: "工单状态", dataIndex: "orderStaus", key: "orderStaus", width: 80 },
@@ -426,6 +446,8 @@ export default defineComponent({
       id: null,
       orderLocation: "",
       orderSvcItem: "",
+      orderNum: "",
+      orderCustom: "",
       orderTel: "",
       orderRemark: "",
       orderAccout: "",
