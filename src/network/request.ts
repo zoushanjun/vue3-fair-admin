@@ -5,7 +5,8 @@ export function request(config) {
   const instance = axios.create({
     // 在请求地址前面加上baseURL
     // baseURL: "http://localhost:5000",
-    baseURL: "http://192.168.64.92:5000",
+    // baseURL: "http://192.168.64.92:5000",
+    baseURL: "http://192.168.64.135:35000",
     timeout: 5000,
   });
 

@@ -13,8 +13,7 @@
         <a-divider />
       </a-tab-pane>
 
-      <!-- 3/绩效统计选项卡内容 -->
-      <a-tab-pane key="3" tab="定时任务">
+      <!-- <a-tab-pane key="3" tab="定时任务">
         <div></div>
 
         <a-divider />
@@ -23,7 +22,7 @@
         <div></div>
 
         <a-divider />
-      </a-tab-pane>
+      </a-tab-pane> -->
     </a-tabs>
   </div>
 </template>

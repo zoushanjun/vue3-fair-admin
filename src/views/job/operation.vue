@@ -371,6 +371,7 @@ export default defineComponent({
         } else config = "";
         const content =
           "尊敬的参展商，您申请的" +
+          record.orderLocation +
           accout +
           config +
           "使用过程中有任何问题请联系现场林工15975118389或客服邹小姐13418001279";
@@ -493,11 +494,18 @@ export default defineComponent({
     const handleJob = (record: any) => {
       // cmdParams.value = record.orderConfig;
 
+      // nornirSvrUrl.value =
+      //   "http://192.168.64.91:8888?hostname=192.168.64.91&username=nornir&password=" +
+      //   window.btoa("Nornir123") +
+      //   "&command=" +
+      //   "python3 vue_add_line.py" +
+      //   " " +
+      //   toRaw(record.orderConfig);
       nornirSvrUrl.value =
-        "http://192.168.64.91:8888?hostname=192.168.64.91&username=nornir&password=" +
-        window.btoa("Nornir123") +
+        "http://192.168.64.135:38888?hostname=192.168.64.135&port=33333&username=root&password=" +
+        window.btoa("Admin123") +
         "&command=" +
-        "python3 vue_add_line.py" +
+        "python /var/opt/nornir/vue_add_line.py" +
         " " +
         toRaw(record.orderConfig);
 
